@@ -1,0 +1,27 @@
+{
+  "name": "termtalk",
+  "version": "0.0.1",
+  "description": "Talk to your peers in the terminal using TermTalk.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Terminalfreaks/TermTalk.git"
+  },
+  "keywords": [
+    "chat",
+    "client",
+    "chat-app"
+  ],
+  "author": "Terminalfreaks",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/Terminalfreaks/TermTalk/issues"
+  },
+  "homepage": "https://github.com/Terminalfreaks/TermTalk#readme",
+  "dependencies": {
+    "socket.io-client": "^2.3.0"
+  }
+}
