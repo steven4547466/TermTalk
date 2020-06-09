@@ -22,7 +22,10 @@
   },
   "homepage": "https://github.com/Terminalfreaks/TermTalk#readme",
   "dependencies": {
+    "blessed": "^0.1.81",
     "enquirer": "^2.3.5",
+    "inquirer": "^7.1.0",
+    "neo-blessed": "^0.2.0",
     "socket.io-client": "^2.3.0"
   }
 }
