@@ -22,13 +22,14 @@ socket.on('connect', async () => {
 	})
 	socket.on("auth_result", (data) => {
 		if(!data.success) {
-			console.log("\u001b[31;1m" + data.message)
+			console.log("\u001b[31;1m" + data.message + "\u001b[0m")
 			if(data.method === "login") {
 				_login()
 			} else {
 				_register()
 			}
 		} else {
+			console.log("\u001b[32m" + data.message + "\u001b[0m")
 			_prompt()
 		}
 	})
