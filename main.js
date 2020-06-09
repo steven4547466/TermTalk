@@ -16,13 +16,13 @@ socket.on('connect', async () => {
 	promptt.run().then(async res => {
 		if(res === "Register") {
 		_register()
-		socket.emit("register", reg)
 	} else {
 		_login()
 	}
 	})
 	socket.on("auth_result", (data) => {
 		if(!data.success) {
+			console.log("\u001b[31;1m" + data.message)
 			if(data.method === "login") {
 				_login()
 			} else {
