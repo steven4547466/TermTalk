@@ -20,6 +20,10 @@ const blessed = require("blessed")
 const contrib = require("blessed-contrib")
 
 class ClientTUI {
+
+	static textPrefix = ""
+	static textSuffix = ""
+
 	static run(socket, user) {
 		const screen = blessed.screen({
 			smartCSR: true,
@@ -39,7 +43,8 @@ class ClientTUI {
 		const messages = grid.set(0, 0, 7.5, 7, contrib.log, {
 			fg: "blue",
 			selectedFg: "blue",
-			label: "Messages"
+			label: "Messages",
+			tags:true
 		})
 
 		const messageBox = blessed.textarea({
@@ -57,22 +62,53 @@ class ClientTUI {
 		messageBox.key("enter", () => form.submit())
 
 		form.on("submit", () => {
-			const msg = messageBox.getValue()
+			const msg = sanitize(messageBox.getValue())
 			messageBox.clearValue()
+			if(ClientTUI.handleCommands(msg.trim(), messages)) return
 			socket.emit("msg", {msg, username: user.username, tag: user.tag, uid: user.uid, sessionID: user.sessionID })
-			messages.log(`${user.username}#${user.tag} > ${msg}`)
+			messages.log(`${ClientTUI.textPrefix}${user.username}#${user.tag} > ${msg}${ClientTUI.textSuffix}`)
 		})
 
 		socket.on('msg', (data) => {
 			if(data.uid == user.uid) return
-			messages.log(`${data.username}#${data.tag} > ${data.msg}`)
+			messages.log(`${ClientTUI.textPrefix}${data.username}#${data.tag} > ${data.msg}${ClientTUI.textSuffix}`)
 		})
+
+		socket.on("disconnect", () => {
+			messages.log(`{red-fg}Client > You have been disconnected.{/red-fg}`)
+		})
+
+		socket.on("reconnect", (attempt) => {
+			messages.log(`{red-fg}Client > Reconnected after ${attempt} attempt(s).{/red-fg}`)
+		})
+
+		socket.on("reconnect_attempt", (attempt) => {
+			messages.log(`{red-fg}Client > Attempting reconnect. #${attempt}{/red-fg}`)
+		})
+
 		screen.key(["q", "C-c"], () => {
 			process.exit();
 		})
 
 		screen.render()
 	}
+
+	static handleCommands(message, messages){
+		if(!message.startsWith("/")) return false
+		let colorRegex = /(#(\d|[a-f]){6})-text/i
+		let matches
+		if(matches = colorRegex.exec(message)){ 
+			ClientTUI.textPrefix = `{${matches[1]}-fg}`
+			ClientTUI.textSuffix = `{/${matches[1]}-fg}`
+			messages.log(`${ClientTUI.textPrefix}Messages now of color ${matches[1]}.${ClientTUI.textSuffix}`)
+			return true
+		}
+		return false
+	}
+}
+
+function sanitize(text){
+	return text.replace(/\{/g, "{ ")
 }
 
 module.exports = ClientTUI;

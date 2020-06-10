@@ -52,7 +52,7 @@ class RegisterTUI {
 			parent: screen,
 			top: 14,
 			left: "center",
-			content: "Tag (4 characters that appear after your name): "
+			content: "Tag (4 or less characters that appear after your name): "
 		})
 
 		const passwordLabel = blessed.text({
