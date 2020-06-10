@@ -45,7 +45,7 @@ class ClientTUI {
 		const messageBox = blessed.textarea({
 			parent: form,
 			name: "msg",
-			top: 33,
+			top: "94%",
 			height: 3,
 			inputOnFocus: true,
 			content: "first",
@@ -60,9 +60,11 @@ class ClientTUI {
 			const msg = messageBox.getValue()
 			messageBox.clearValue()
 			socket.emit("msg", {msg, username: user.username, tag: user.tag, sessionID: user.sessionID })
+			messages.log(`${user.username}#${user.tag} > ${msg}`)
 		})
 
 		socket.on('msg', (data) => {
+			if(data.sessionID == user.sessionID) return
 			messages.log(`${data.username}#${data.tag} > ${data.msg}`)
 		})
 		screen.key(["q", "C-c"], () => {
