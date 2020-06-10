@@ -1,6 +1,6 @@
 {
   "name": "termtalk",
-  "version": "0.0.2",
+  "version": "0.1.2",
   "description": "Talk to your peers in the terminal using TermTalk.",
   "main": "index.js",
   "scripts": {
@@ -13,7 +13,9 @@
   "keywords": [
     "chat",
     "client",
-    "chat-app"
+    "chat-app",
+    "socket-io",
+    "cli"
   ],
   "author": "Terminalfreaks",
   "license": "GPL-3.0",
@@ -23,9 +25,8 @@
   "homepage": "https://github.com/Terminalfreaks/TermTalk#readme",
   "dependencies": {
     "blessed": "^0.1.81",
+    "blessed-contrib": "^4.8.20",
     "enquirer": "^2.3.5",
-    "inquirer": "^7.1.0",
-    "neo-blessed": "^0.2.0",
     "socket.io-client": "^2.3.0"
   }
 }
