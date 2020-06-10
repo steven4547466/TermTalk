@@ -20,6 +20,10 @@ const blessed = require("blessed")
 const contrib = require("blessed-contrib")
 
 class ClientTUI {
+
+	static textPrefix = ""
+	static textSuffix = ""
+
 	static run(socket, user) {
 		const screen = blessed.screen({
 			smartCSR: true,
@@ -60,13 +64,14 @@ class ClientTUI {
 		form.on("submit", () => {
 			const msg = sanitize(messageBox.getValue())
 			messageBox.clearValue()
+			if(ClientTUI.handleCommands(msg.trim(), messages)) return
 			socket.emit("msg", {msg, username: user.username, tag: user.tag, uid: user.uid, sessionID: user.sessionID })
-			messages.log(`${user.username}#${user.tag} > ${msg}`)
+			messages.log(`${ClientTUI.textPrefix}${user.username}#${user.tag} > ${msg}${ClientTUI.textSuffix}`)
 		})
 
 		socket.on('msg', (data) => {
 			if(data.uid == user.uid) return
-			messages.log(`${data.username}#${data.tag} > ${data.msg}`)
+			messages.log(`${ClientTUI.textPrefix}${data.username}#${data.tag} > ${data.msg}${ClientTUI.textSuffix}`)
 		})
 
 		socket.on("disconnect", () => {
@@ -86,6 +91,19 @@ class ClientTUI {
 		})
 
 		screen.render()
+	}
+
+	static handleCommands(message, messages){
+		if(!message.startsWith("/")) return false
+		let colorRegex = /(#(\d|[a-f]){6})-text/i
+		let matches
+		if(matches = colorRegex.exec(message)){ 
+			ClientTUI.textPrefix = `{${matches[1]}-fg}`
+			ClientTUI.textSuffix = `{/${matches[1]}-fg}`
+			messages.log(`${ClientTUI.textPrefix}Messages now of color ${matches[1]}.${ClientTUI.textSuffix}`)
+			return true
+		}
+		return false
 	}
 }
 
