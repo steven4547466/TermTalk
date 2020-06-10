@@ -88,7 +88,7 @@ socket.on('msg', (d) => {
 async function _awaitMessage() {
 	try {
 		let message = await prompt({ type: "input", name: "message", message: "=>" })
-		socket.emit("msg", { msg: message.message, username: user.username, tag: user.tag })
+		socket.emit("msg", { msg: message.message, username: user.username, tag: user.tag, sessionID: user.sessionID })
 		_awaitMessage()
 	} catch (e) {
 		console.error(e)
@@ -97,5 +97,5 @@ async function _awaitMessage() {
 }
 
 socket.on('disconnect', function () {
-	socket.emit('disconnect')
+	socket.emit('disconnect', {sessionID:user.sessionID})
 })
