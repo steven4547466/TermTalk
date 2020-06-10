@@ -22,7 +22,7 @@ class LoginTUI {
 			top: 20,
 			width: "50%",
 			height: "10%",
-			content: "{center}Error Message{/center}",
+			content: " ",
 			tags: true,
 			hidden: true,
 			border: {
@@ -130,8 +130,8 @@ class LoginTUI {
 		})
 	
 		register.on("press", () => {
-			screen.destroy()
 			require("./Register").run(socket)
+			screen.destroy()
 		})
 	
 		form.on("submit", (data) => {
