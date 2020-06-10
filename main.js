@@ -87,7 +87,7 @@ async function _register() {
 socket.on('msg', (d) => {
 	if (d.username == user.username) return
 	console.log(`\u001b[1A\u001b[${process.stdout.columns}D\u001b[2K${d.username} > ${d.msg}`)
-	_awaitMessage()
+	_logPromptPrefix()
 })
 
 async function _awaitMessage() {
@@ -99,6 +99,10 @@ async function _awaitMessage() {
 		console.error(e)
 		process.exit()
 	}
+}
+
+function _logPromptPrefix(){
+	console.log("\u001b[36m? \u001b[37;1m=> \u001b[0m»")
 }
 
 socket.on('disconnect', function () {
