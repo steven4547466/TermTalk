@@ -39,7 +39,8 @@ class ClientTUI {
 		const messages = grid.set(0, 0, 7.5, 7, contrib.log, {
 			fg: "blue",
 			selectedFg: "blue",
-			label: "Messages"
+			label: "Messages",
+			tags:true
 		})
 
 		const messageBox = blessed.textarea({
@@ -57,7 +58,7 @@ class ClientTUI {
 		messageBox.key("enter", () => form.submit())
 
 		form.on("submit", () => {
-			const msg = messageBox.getValue()
+			const msg = sanitize(messageBox.getValue())
 			messageBox.clearValue()
 			socket.emit("msg", {msg, username: user.username, tag: user.tag, uid: user.uid, sessionID: user.sessionID })
 			messages.log(`${user.username}#${user.tag} > ${msg}`)
@@ -67,12 +68,29 @@ class ClientTUI {
 			if(data.uid == user.uid) return
 			messages.log(`${data.username}#${data.tag} > ${data.msg}`)
 		})
+
+		socket.on("disconnect", () => {
+			messages.log(`{red-fg}Client > You have been disconnected.{/red-fg}`)
+		})
+
+		socket.on("reconnect", () => {
+			messages.log(`{red-fg}Client > Reconnected.{/red-fg}`)
+		})
+
+		socket.on("reconnect_attempt", () => {
+			messages.log(`{red-fg}Client > Attempting reconnect.{/red-fg}`)
+		})
+
 		screen.key(["q", "C-c"], () => {
 			process.exit();
 		})
 
 		screen.render()
 	}
+}
+
+function sanitize(text){
+	return text.replace(/\{/g, "{ ")
 }
 
 module.exports = ClientTUI;
