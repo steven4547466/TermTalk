@@ -78,12 +78,12 @@ class ClientTUI {
 			messages.log(`{red-fg}Client > You have been disconnected.{/red-fg}`)
 		})
 
-		socket.on("reconnect", () => {
-			messages.log(`{red-fg}Client > Reconnected.{/red-fg}`)
+		socket.on("reconnect", (attempt) => {
+			messages.log(`{red-fg}Client > Reconnected after ${attempt} attempt(s).{/red-fg}`)
 		})
 
-		socket.on("reconnect_attempt", () => {
-			messages.log(`{red-fg}Client > Attempting reconnect.{/red-fg}`)
+		socket.on("reconnect_attempt", (attempt) => {
+			messages.log(`{red-fg}Client > Attempting reconnect. #${attempt}{/red-fg}`)
 		})
 
 		screen.key(["q", "C-c"], () => {
