@@ -22,6 +22,7 @@ const { Input, prompt } = require('enquirer')
 const args = process.argv.slice(2).join(" ")
 
 if(args.includes("--tui")) return require("./tui/index.js")
+process.title = "TermTalk"
 
 new Input({
 	name: "ip",
