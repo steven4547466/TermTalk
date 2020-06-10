@@ -59,12 +59,12 @@ class ClientTUI {
 		form.on("submit", () => {
 			const msg = messageBox.getValue()
 			messageBox.clearValue()
-			socket.emit("msg", {msg, username: user.username, tag: user.tag, sessionID: user.sessionID })
+			socket.emit("msg", {msg, username: user.username, tag: user.tag, uid: user.uid, sessionID: user.sessionID })
 			messages.log(`${user.username}#${user.tag} > ${msg}`)
 		})
 
 		socket.on('msg', (data) => {
-			if(data.sessionID == user.sessionID) return
+			if(data.uid == user.uid) return
 			messages.log(`${data.username}#${data.tag} > ${data.msg}`)
 		})
 		screen.key(["q", "C-c"], () => {
