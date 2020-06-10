@@ -143,8 +143,8 @@ class LoginTUI {
 				error.content = "{center}Please enter your username and password.{/center}"
 				if(error.hidden){ 
 					error.toggle()
-					screen.render()
 				}
+				screen.render()
 			} else {
 				if(!error.hidden){ 
 					error.toggle()
@@ -159,9 +159,9 @@ class LoginTUI {
 				error.content = "{center}" + data.message + "{/center}"
 				if(error.hidden){ 
 					error.toggle()
-					screen.render()
 				}
 				form.reset()
+				screen.render()
 			} else {
 				require("./Client").run(socket, data.user)
 				screen.destroy()
