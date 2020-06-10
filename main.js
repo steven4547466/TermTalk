@@ -35,6 +35,11 @@ socket.on('connect', async () => {
 			_awaitMessage()
 		}
 	})
+	socket.on("method_result", (data) => {
+		if(!data.success){
+			console.log("\u001b[31;1m" + data.message + "\u001b[0m")
+		}
+	})
 })
 
 async function _login() {
