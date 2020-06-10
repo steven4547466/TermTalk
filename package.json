@@ -4,7 +4,8 @@
   "description": "Talk to your peers in the terminal using TermTalk.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "tui": "node tui/index.js",
+    "cli": "node index.js"
   },
   "repository": {
     "type": "git",
@@ -28,5 +29,8 @@
     "blessed-contrib": "^4.8.20",
     "enquirer": "^2.3.5",
     "socket.io-client": "^2.3.0"
+  },
+  "bin": {
+    "termtalk": "index.js"
   }
 }

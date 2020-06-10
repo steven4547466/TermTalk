@@ -1,4 +1,23 @@
-const blessed = require("blessed");
+/*
+    TermTalk - A simple and straightforward way of talking to your peers in the terminal.
+    Copyright (C) 2020 Terminalfreaks
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
+const blessed = require("blessed")
+
 class RegisterTUI {
 	static run(socket) {
 		const screen = blessed.screen({
@@ -12,27 +31,6 @@ class RegisterTUI {
 			left: "center",
 			keys: true,
 			vi: true
-		})
-
-		// Error box
-		const error = blessed.box({
-			parent: screen,
-			left: "75%",
-			top: "center",
-			width: "18%",
-			height: 4,
-			content: " ",
-			tags: true,
-			hidden: true,
-			border: {
-				type: "line"
-			},
-			style: {
-				fg: "red",
-				border: {
-					fg: "red"
-				}
-			}
 		})
 	
 		// Textbox Labels
@@ -146,6 +144,27 @@ class RegisterTUI {
 			}
 		})
 
+		// Error box
+		const error = blessed.box({
+			parent: screen,
+			left: "center",
+			top: 30,
+			width: "18%",
+			height: 4,
+			content: " ",
+			tags: true,
+			hidden: true,
+			border: {
+				type: "line"
+			},
+			style: {
+				fg: "red",
+				border: {
+					fg: "red"
+				}
+			}
+		})
+
 		register.on('press', () => {
 			form.submit();
 		})
@@ -172,9 +191,7 @@ class RegisterTUI {
 			if (!data.success) {
 				error.content = "{center}" + data.message + "{/center}"
 				error.height = 5
-				if(error.hidden){ 
-					error.toggle()
-				}
+				if(error.hidden) error.toggle()
 				form.reset()
 				screen.render()
 			} else {
