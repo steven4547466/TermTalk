@@ -14,6 +14,27 @@ class LoginTUI {
 			keys: true,
 			vi: true
 		})
+
+		// Error box
+		const error = blessed.box({
+			parent: screen,
+			left: "center",
+			top: 20,
+			width: "50%",
+			height: "10%",
+			content: " ",
+			tags: true,
+			hidden: true,
+			border: {
+				type: "line"
+			},
+			style: {
+				fg: "red",
+				border: {
+					fg: "red"
+				}
+			}
+		})
 	
 		// Textbox Labels
 		const usernameLabel = blessed.text({
@@ -103,30 +124,43 @@ class LoginTUI {
 				}
 			}
 		})
-		
+
 		login.on('press', () => {
 			form.submit();
 		})
 	
 		register.on("press", () => {
-			screen.destroy()
 			require("./Register").run(socket)
+			screen.destroy()
 		})
 	
 		form.on("submit", (data) => {
 			if(!data.uid || !data.password) {
-				console.log("\nNo data to use: %s", data)
+				error.setContent("{center}Please enter your username and password.{/center}")
+				if(error.hidden){ 
+					error.toggle()
+					screen.render()
+				}
 			} else {
+				if(!error.hidden){ 
+					error.toggle()
+					screen.render()
+				}
 				socket.emit("login", data)
 			}
 		})
 
 		socket.on("auth_result", (data) => {
 			if (!data.success) {
+				error.setContent("{center}" + data.message + "{/center}")
+				if(error.hidden){ 
+					error.toggle()
+					screen.render()
+				}
 				form.reset()
 			} else {
-				screen.destroy()
 				require("./Client").run(socket)
+				screen.destroy()
 			}
 		})
 

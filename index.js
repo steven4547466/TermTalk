@@ -7,7 +7,7 @@ socket.on('connect', async () => {
 	console.log(`Connected to the server.`)
 	try {
 		const ans = await prompt({
-			type: "select"
+			type: "select",
 			name: "checkpoint",
 			message: "What would you like to do?",
 			choices: ["Register", "Login"]
