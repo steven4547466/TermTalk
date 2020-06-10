@@ -77,7 +77,7 @@ function run() {
 	})
 
 	socket.on('msg', (data) => {
-		console.log(`\u001b[1A\u001b[${process.stdout.columns}D\u001b[2K\n${data.username} > ${data.msg}`)
+		console.log(`\u001b[1A\u001b[${process.stdout.columns}D\u001b[2K\n${data.username}#${data.tag} > ${data.msg}`)
 		_logPromptPrefix()
 	})
 
