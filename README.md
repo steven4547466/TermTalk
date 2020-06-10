@@ -7,6 +7,23 @@ It is still being developed but is currently very usable, and even has password 
 # Screenshot
 soontm
 
+# Installation
+```
+git clone https://github.com/Terminalfreaks/TermTalk
+cd TermTalk
+npm link
+```  
+Now you can run `termtalk` and `termtalk --tui` for the text-based ui.  
+If you don't want to link, the scripts `cli` and `tui` are available:  
+```
+npm run cli
+```  
+OR
+```
+npm run tui
+```  
+for the text-based ui.
+
 # Documentation
 Here is a bit of the way on how it works. It's a Socket.io server that waits for a connected client to send login information or registration information.  
 
