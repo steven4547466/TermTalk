@@ -51,7 +51,7 @@ function run() {
 			}
 		} catch(err) {
 			console.error(err)
-			process.exit(1)
+			process.exit(0)
 		}
 
 		socket.on("auth_result", (data) => {
@@ -102,44 +102,54 @@ function run() {
 	*/
 
 	async function _login() {
-		const login = await prompt([
-			{
-				type: "input",
-				name: "uid",
-				message: "UID (Account Name)?"
-			},
-			{
-				type: "password",
-				name: "password",
-				message: "Password?"
-			}
-		])
-		socket.emit("login", login)
+		try {
+			const login = await prompt([
+				{
+					type: "input",
+					name: "uid",
+					message: "UID (Account Name)?"
+				},
+				{
+					type: "password",
+					name: "password",
+					message: "Password?"
+				}
+			])
+			socket.emit("login", login)
+		} catch(e) {
+			console.error(e)
+			process.exit(0)
+		}
 	}
 	async function _register() {
-		const reg = await prompt([
-			{
-				type: "input",
-				name: "uid",
-				message: "What do you want your Account Name (UID) to be? (This is used to login.)"
-			},
-			{
-				type: "input",
-				name: "username",
-				message: "Username?"
-			},
-			{
-				type: "input",
-				name: "tag",
-				message: "Tag? (This will appear after your name. 4 characters.)"
-			},
-			{
-				type: "password",
-				name: "password",
-				message: "Password?"
-			}
-		])
-		socket.emit("register", reg)
+		try {
+			const reg = await prompt([
+				{
+					type: "input",
+					name: "uid",
+					message: "What do you want your Account Name (UID) to be? (This is used to login.)"
+				},
+				{
+					type: "input",
+					name: "username",
+					message: "Username?"
+				},
+				{
+					type: "input",
+					name: "tag",
+					message: "Tag? (This will appear after your name. 4 characters.)"
+				},
+				{
+					type: "password",
+					name: "password",
+					message: "Password?"
+				}
+			])
+			socket.emit("register", reg)
+		} catch(e) {
+			console.error(e)
+			process.exit(0)
+		}
 	}
 
 	function _logPromptPrefix(){
