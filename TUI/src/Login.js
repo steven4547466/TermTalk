@@ -130,13 +130,17 @@ class LoginTUI {
 		})
 	
 		register.on("press", () => {
+			register.removeAllListeners()
+			login.removeAllListeners()
+			socket.removeAllListeners()
+			form.removeAllListeners()
 			require("./Register").run(socket)
 			screen.destroy()
 		})
 	
 		form.on("submit", (data) => {
 			if(!data.uid || !data.password) {
-				error.setContent("{center}Please enter your username and password.{/center}")
+				error.content = "{center}Please enter your username and password.{/center}"
 				if(error.hidden){ 
 					error.toggle()
 					screen.render()
@@ -152,14 +156,14 @@ class LoginTUI {
 
 		socket.on("auth_result", (data) => {
 			if (!data.success) {
-				error.setContent("{center}" + data.message + "{/center}")
+				error.content = "{center}" + data.message + "{/center}"
 				if(error.hidden){ 
 					error.toggle()
 					screen.render()
 				}
 				form.reset()
 			} else {
-				require("./Client").run(socket)
+				require("./Client").run(socket, data.user)
 				screen.destroy()
 			}
 		})
