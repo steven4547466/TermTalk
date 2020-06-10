@@ -1,7 +1,7 @@
 const blessed = require("blessed");
 
 class ClientTUI {
-	static run(socket) {
+	static run(socket, user) {
 		const screen = blessed.screen({
 			smartCSR: true,
 			title: "TermTalk Client"
@@ -11,7 +11,7 @@ class ClientTUI {
 			parent: screen,
 			top: 4,
 			left: "center",
-			content: "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP: "
+			content: "P: "
 		})
 
 		screen.key(["q", "C-c"], () => {
