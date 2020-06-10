@@ -1,6 +1,6 @@
 {
   "name": "termtalk",
-  "version": "0.1.2",
+  "version": "0.1.66",
   "description": "Talk to your peers in the terminal using TermTalk.",
   "main": "index.js",
   "scripts": {
