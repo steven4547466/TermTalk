@@ -103,7 +103,7 @@ class LoginTUI {
 			name: "login",
 			content: "Login",
 			top: 15,
-			left: 46,
+			left: getLeftOffset(form.width, 46),
 			shrink: true,
 			padding: {
 				top: 1,
@@ -125,7 +125,7 @@ class LoginTUI {
 			name: "register",
 			content: "Register Instead",
 			top: 15,
-			left: 60,
+			left: getLeftOffset(form.width, 60),
 			shrink: true,
 			padding: {
 				top: 1,
@@ -191,7 +191,16 @@ class LoginTUI {
 		})
 
 		screen.render()
+
+		screen.on("resize", () => {
+			login.left = getLeftOffset(screen.width, 46)
+			register.left = getLeftOffset(screen.width, 60)
+		})
 	}
+}
+
+function getLeftOffset(width, originalOffset){
+	return Math.round((width*originalOffset/120)+(originalOffset*((width-120)/120)/4.5))
 }
 
 module.exports = LoginTUI;

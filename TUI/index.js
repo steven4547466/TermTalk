@@ -77,7 +77,7 @@ const connect = blessed.button({
 	name: "connect",
 	content: "Connect",
 	top: 8,
-	left: 46,
+	left: "center",
 	shrink: true,
 	padding: {
 		top: 1,

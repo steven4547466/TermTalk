@@ -76,23 +76,19 @@ function run() {
 	})
 
 	socket.on('msg', (data) => {
-		console.log(`\u001b[1A\u001b[${process.stdout.columns}D\u001b[2K\n${data.username} > ${data.msg}`)
+		console.log(`\u001b[1A\u001b[${process.stdout.columns}D\u001b[2K\n${data.username}#${data.tag} > ${data.msg}`)
 		_logPromptPrefix()
 	})
 
-socket.on('msg', (data) => {
-	console.log(`\u001b[1A\u001b[${process.stdout.columns}D\u001b[2K\n${data.username}#${data.tag} > ${data.msg}`)
-	_logPromptPrefix()
-})
-
-async function _awaitMessage() {
-	try {
-		let { msg } = await prompt({ type: "input", name: "msg", message: `\u001b[${process.stdout.columns}D\u001b ` })
-		socket.emit("msg", {msg, username: user.username, tag: user.tag, sessionID: user.sessionID })
-		_awaitMessage()
-	} catch (e) {
-		console.error(e)
-		process.exit(0)
+	async function _awaitMessage() {
+		try {
+			let { msg } = await prompt({ type: "input", name: "msg", message: `\u001b[${process.stdout.columns}D\u001b ` })
+			socket.emit("msg", {msg, username: user.username, tag: user.tag, sessionID: user.sessionID })
+			_awaitMessage()
+		} catch (e) {
+			console.error(e)
+			process.exit(0)
+		}
 	}
 
 	/*
