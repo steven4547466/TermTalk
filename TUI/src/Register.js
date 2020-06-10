@@ -21,7 +21,7 @@ class RegisterTUI {
 			top: "center",
 			width: "18%",
 			height: 4,
-			content: "{center}Error Message{/center}",
+			content: " ",
 			tags: true,
 			hidden: true,
 			border: {
