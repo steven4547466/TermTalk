@@ -96,16 +96,6 @@ async function _awaitMessage(){
 	}
 }
 
-const ci = rl.createInterface({
-			input: process.stdin,
-			output: process.stdout
-		})
-
-		_prompt = () => {
-			ci.setPrompt("=> ")
-			ci.prompt()
-		}
-
 socket.on('disconnect', function() {
 	socket.emit('disconnect')
 })
