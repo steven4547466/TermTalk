@@ -3,6 +3,7 @@ const rl = require("readline")
 const { Select, prompt } = require('enquirer')
 
 let authed;
+let user;
 
 socket.on('connect', async () => {
 	console.log(`Connected to the server.`)
@@ -30,7 +31,8 @@ socket.on('connect', async () => {
 			}
 		} else {
 			console.log("\u001b[32m" + data.message + "\u001b[0m")
-			_prompt()
+			user = data.user
+			_awaitMessage()
 		}
 	})
 })
@@ -78,19 +80,21 @@ async function _register() {
 }
 
 socket.on('msg', (d) => {
+	if(d.username == user.username) return
 	console.log(`\u001b[1A\u001b[${process.stdout.columns}D\u001b[2K${d.username} > ${d.msg}`)
-	_prompt()
+	_awaitMessage()
 })
 
-const ci = rl.createInterface({
-			input: process.stdin,
-			output: process.stdout
-		})
-
-		_prompt = () => {
-			ci.setPrompt("=> ")
-			ci.prompt()
-		}
+async function _awaitMessage(){
+	try{
+		let message = await prompt({type:"input",name:"message",message:"=>"})
+		socket.emit("msg", {msg:message.message,username:user.username,tag:user.tag})
+		_awaitMessage()
+	}catch(e){
+		console.error(e)
+		process.exit()
+	}
+}
 
 socket.on('disconnect', function() {
 	socket.emit('disconnect')
