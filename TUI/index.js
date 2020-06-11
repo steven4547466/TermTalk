@@ -119,6 +119,7 @@ screen.render()
 
 function run() {
 	socket.on('connect', () => {
+		socket.removeAllListeners()
 		Login.run(socket)
 	})
 }

@@ -86,6 +86,12 @@ class ClientTUI {
 			messages.log(`{red-fg}Client > Attempting reconnect. #${attempt}{/red-fg}`)
 		})
 
+		socket.on("kickEvent", (data) => {
+			messages.log(`${ClientTUI.textPrefix}${data.username}#${data.tag} > ${data.msg}${ClientTUI.textSuffix}`)
+			// TODO: Make this server-side
+			socket.close()
+		})
+
 		screen.key(["q", "C-c"], () => {
 			process.exit();
 		})
