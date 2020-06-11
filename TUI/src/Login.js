@@ -24,7 +24,7 @@ class LoginTUI {
 			smartCSR: true,
 			title: "TermTalk Login"
 		})
-	
+
 		const form = blessed.form({
 			parent: screen,
 			width: "100%",
@@ -53,7 +53,7 @@ class LoginTUI {
 				}
 			}
 		})
-	
+
 		// Textbox Labels
 		const usernameLabel = blessed.text({
 			parent: screen,
@@ -96,7 +96,7 @@ class LoginTUI {
 			},
 			censor: true
 		})
-	
+
 		// Buttons
 		const login = blessed.button({
 			parent: form,
@@ -146,7 +146,7 @@ class LoginTUI {
 		login.on('press', () => {
 			form.submit();
 		})
-	
+
 		register.on("press", () => {
 			register.removeAllListeners()
 			login.removeAllListeners()
@@ -155,16 +155,16 @@ class LoginTUI {
 			require("./Register").run(socket)
 			screen.destroy()
 		})
-	
+
 		form.on("submit", (data) => {
-			if(!data.uid || !data.password) {
+			if (!data.uid || !data.password) {
 				error.content = "{center}Please enter your username and password.{/center}"
-				if(error.hidden) { 
+				if (error.hidden) {
 					error.toggle()
 				}
 				screen.render()
 			} else {
-				if(!error.hidden){ 
+				if (!error.hidden) {
 					error.toggle()
 					screen.render()
 				}
@@ -175,7 +175,7 @@ class LoginTUI {
 		socket.on("auth_result", (data) => {
 			if (!data.success) {
 				error.content = "{center}" + data.message + "{/center}"
-				if(error.hidden){ 
+				if (error.hidden) {
 					error.toggle()
 				}
 				form.reset()
@@ -201,8 +201,8 @@ class LoginTUI {
 	}
 }
 
-function getLeftOffset(width, originalOffset){
-	return Math.round((width*originalOffset/120)+(originalOffset*((width-120)/120)/4.5))
+function getLeftOffset(width, originalOffset) {
+	return Math.round((width * originalOffset / 120) + (originalOffset * ((width - 120) / 120) / 4.5))
 }
 
 module.exports = LoginTUI;

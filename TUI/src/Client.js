@@ -41,7 +41,7 @@ class ClientTUI {
 			vi: true
 		})
 
-		const grid = new contrib.grid({rows: 8, cols: 8, screen: screen})
+		const grid = new contrib.grid({ rows: 8, cols: 8, screen: screen })
 
 		const messages = grid.set(0, 0, 7.5, 7, contrib.log, {
 			label: "Messages",
@@ -77,13 +77,13 @@ class ClientTUI {
 		form.on("submit", () => {
 			const msg = sanitize(messageBox.getValue())
 			messageBox.clearValue()
-			if(this._handleCommands(msg.trim(), messages, screen)) return
-			socket.emit("msg", {msg, username: user.username, tag: user.tag, uid: user.uid, sessionID: user.sessionID })
+			if (this._handleCommands(msg.trim(), messages, screen)) return
+			socket.emit("msg", { msg, username: user.username, tag: user.tag, uid: user.uid, sessionID: user.sessionID })
 			messages.log(`${this.textPrefix}${user.username}#${user.tag} > ${msg}${this.textSuffix}`)
 		})
 
 		socket.on('msg', (data) => {
-			if(data.uid == user.uid) return
+			if (data.uid == user.uid) return
 			messages.log(`${this.textPrefix}${data.username}#${data.tag} > ${data.msg}${this.textSuffix}`)
 		})
 
@@ -104,8 +104,8 @@ class ClientTUI {
 		})
 
 		socket.on("method_result", (data) => {
-			if(!data.success){
-				if(data.method == "messageSend") messages.log(`{red-fg}Client > ${data.message}{/red-fg}`)
+			if (!data.success) {
+				if (data.method == "messageSend") messages.log(`{red-fg}Client > ${data.message}{/red-fg}`)
 			}
 		})
 
@@ -117,23 +117,23 @@ class ClientTUI {
 	}
 
 	static _handleCommands(message, messages, screen) {
-		if(!message.startsWith("/")) return false
+		if (!message.startsWith("/")) return false
 		const command = message.slice(1).split(" ")[0]
 		const args = message.slice(command.length + 1).trim().split(" ")
 		let colorRegex = /(#(\d|[a-f]){6})-text/i
 		let matches;
-		if(matches = colorRegex.exec(message)){ 
+		if (matches = colorRegex.exec(message)) {
 			Utils.setMainTextColor(matches[1])
 			this.textPrefix = `{${matches[1]}-fg}`
 			this.textSuffix = `{/${matches[1]}-fg}`
 			messages.log(`${this.textPrefix}Messages now of color ${matches[1]}.${this.textSuffix}`)
 			return true
-		} else if(command) {
-			switch(command) {
+		} else if (command) {
+			switch (command) {
 				case "connect":
 					const newSocket = io(args[0].startsWith("http") ? args[0] : `http://${args[0]}`)
 					messages.log("Client > Connecting to different server...")
-					newSocket.on('connect', () => {	
+					newSocket.on('connect', () => {
 						socket.disconnect()
 						socket.removeAllListeners()
 						Login.run(newSocket)
@@ -148,7 +148,7 @@ class ClientTUI {
 	}
 }
 
-function sanitize(text){
+function sanitize(text) {
 	return text.replace(/\{/g, "{ ")
 }
 

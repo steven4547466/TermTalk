@@ -5,11 +5,11 @@ class Utils {
 	static cachedConfig = null
 
 	static get config() {
-		if(Utils.cachedConfig){
+		if (Utils.cachedConfig) {
 			return Utils.cachedConfig
 		}
-		if(!fs.existsSync(`${os.userInfo().homedir}/termtalk`)) fs.mkdirSync(`${os.userInfo().homedir}/termtalk`)
-		if(fs.existsSync(`${os.userInfo().homedir}/termtalk/.termtalkconf.json`)) {
+		if (!fs.existsSync(`${os.userInfo().homedir}/termtalk`)) fs.mkdirSync(`${os.userInfo().homedir}/termtalk`)
+		if (fs.existsSync(`${os.userInfo().homedir}/termtalk/.termtalkconf.json`)) {
 			Utils.cachedConfig = JSON.parse(fs.readFileSync(`${os.userInfo().homedir}/termtalk/.termtalkconf.json`))
 			return Utils.cachedConfig
 		} else {
@@ -20,20 +20,20 @@ class Utils {
 		}
 	}
 
-	static overWriteConfig(newConfig){
+	static overWriteConfig(newConfig) {
 		Utils.cachedConfig = newConfig
 		fs.writeFileSync(`${os.userInfo().homedir}/termtalk/.termtalkconf.json`, JSON.stringify(newConfig))
 		return newConfig
 	}
 
-	static addToIps(ip){
+	static addToIps(ip) {
 		let config = Utils.config
-		if(config.ips.includes(ip)) return
+		if (config.ips.includes(ip)) return
 		config.ips.push(ip)
 		this.overWriteConfig(config)
 	}
 
-	static setMainTextColor(color){
+	static setMainTextColor(color) {
 		let config = Utils.config
 		config.chatColor = color
 		this.overWriteConfig(config)
