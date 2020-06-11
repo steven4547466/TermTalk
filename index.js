@@ -20,6 +20,7 @@
 const io = require('socket.io-client')
 const { Input, prompt } = require('enquirer')
 const args = process.argv.slice(2).join(" ")
+let loggedIn = false
 
 if(args.includes("--tui")) return require("./tui/index.js")
 process.title = "TermTalk"
@@ -35,50 +36,75 @@ new Input({
 function run() {
 	let user;
 	socket.on('connect', async () => {
-		console.log(`Connected to the server.`)
-		try {
-			const ans = await prompt({
-				type: "select",
-				name: "checkpoint",
-				message: "What would you like to do?",
-				choices: ["Register", "Login"]
-			})
+		if(!loggedIn){
+			console.log(`Connected to the server.`)
+			try {
+				const ans = await prompt({
+					type: "select",
+					name: "checkpoint",
+					message: "What would you like to do?",
+					choices: ["Register", "Login"]
+				})
 
-			if (ans.checkpoint === "Register") {
-				_register()
-			} else {
-				_login()
+				if (ans.checkpoint === "Register") {
+					_register()
+				} else {
+					_login()
+				}
+			} catch(err) {
+				console.error(err)
+				process.exit(0)
 			}
-		} catch(err) {
-			console.error(err)
-			process.exit(0)
+
+			socket.on("auth_result", (data) => {
+				if (!data.success) {
+					console.log("\u001b[31;1m" + data.message + "\u001b[0m")
+					if (data.method === "login") {
+						_login()
+					} else {
+						_register()
+					}
+				} else {
+					loggedIn = true
+					console.log("\u001b[32m" + data.message + "\u001b[0m")
+					user = data.user
+					_awaitMessage()
+				}
+			})
+			
+			socket.on("method_result", (data) => {
+				if(!data.success){
+					console.log("\u001b[31;1m" + data.message + "\u001b[0m")
+				}
+			})
+		}else{
+			_logPromptPrefix()
 		}
 
-		socket.on("auth_result", (data) => {
-			if (!data.success) {
-				console.log("\u001b[31;1m" + data.message + "\u001b[0m")
-				if (data.method === "login") {
-					_login()
-				} else {
-					_register()
-				}
-			} else {
-				console.log("\u001b[32m" + data.message + "\u001b[0m")
-				user = data.user
-				_awaitMessage()
-			}
+		socket.on("disconnect", () => {
+			console.log(`Client > You have been disconnected.`)
 		})
-		
-		socket.on("method_result", (data) => {
-			if(!data.success){
-				console.log("\u001b[31;1m" + data.message + "\u001b[0m")
-			}
-		})
-	})
 
-	socket.on('msg', (data) => {
-		console.log(`\u001b[1A\u001b[${process.stdout.columns}D\u001b[2K\n${data.username}#${data.tag} > ${data.msg}`)
-		_logPromptPrefix()
+		socket.on("reconnect", (attempt) => {
+			console.log(`Client > Reconnected after ${attempt} attempt(s).`)
+		})
+
+		socket.on("reconnect_attempt", (attempt) => {
+			console.log(`Client > Attempting reconnect. #${attempt}`)
+		})
+
+		socket.on('msg', (data) => {
+			console.log(`\u001b[1A\u001b[${process.stdout.columns}D\u001b[2K\n${data.username}#${data.tag} > ${data.msg}`)
+			_logPromptPrefix()
+		})
+	
+		socket.on("get_user_data", () => {
+			socket.emit("return_user_data", user)
+		})
+
+		process.on("beforeExit", () => {
+			socket.close(true)
+		})
 	})
 
 	async function _awaitMessage() {
