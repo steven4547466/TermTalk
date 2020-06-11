@@ -18,13 +18,15 @@
 
 const io = require("socket.io-client")
 const blessed = require("blessed")
+const fs = require("fs")
 const Login = require("./src/Login")
+const Utils = require("../src/Utils")
 
 const screen = blessed.screen({
 	smartCSR: true,
 	title: "TermTalk"
 })
-	
+
 const form = blessed.form({
 	parent: screen,
 	width: "100%",
@@ -93,6 +95,35 @@ const connect = blessed.button({
 			inverse: true
 		}
 	}
+})
+
+const savedIPs = blessed.list({
+	parent: form,
+	top: 13,
+	left: 'center',
+	width: "30%",
+	height: "60%",
+	items: Utils.config().ips,
+	tags: true,
+	keys: true,
+	border: {
+    	type: "line"
+	},
+	style: {
+		selected: {
+    		fg: "white",
+    		bg: "blue"
+    	},
+	    border: {
+			fg: "blue"
+		}
+  	}
+})
+const savedIPsLabel = blessed.text({
+	parent: screen,
+	top: 13,
+	left: "center",
+	content: "Saved IPs"
 })
 
 connect.on("press", () => form.submit())

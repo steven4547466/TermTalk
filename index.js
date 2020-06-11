@@ -18,10 +18,15 @@
 */
 
 const io = require('socket.io-client')
+const fs = require("fs")
 const { Input, prompt } = require('enquirer')
+const defaultConfig = require("./config.json")
+const Utils = require("./src/Utils")
+
 const args = process.argv.slice(2).join(" ")
 let loggedIn = false
 
+if(!Utils.config()) fs.appendFileSync(`${require("os").userInfo().homedir}\\.termtalkconf.json`, JSON.stringify(defaultConfig, null, 4))
 if(args.includes("--tui")) return require("./tui/index.js")
 process.title = "TermTalk"
 
