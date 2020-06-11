@@ -26,8 +26,9 @@ const Utils = require("./src/Utils")
 const args = process.argv.slice(2).join(" ")
 let loggedIn = false
 
-if (!Utils.config()) fs.appendFileSync(`${require("os").userInfo().homedir}/termtalk/.termtalkconf.json`, JSON.stringify(defaultConfig, null, 4))
-if (args.includes("--tui")) return require("./tui/index.js")
+if(!Utils.config) fs.appendFileSync(`${require("os").userInfo().homedir}/termtalk/.termtalkconf.json`, JSON.stringify(defaultConfig, null, 4))
+if(args.includes("--tui")) return require("./tui/index.js")
+
 process.title = "TermTalk"
 
 new Input({
@@ -184,6 +185,6 @@ function run() {
 	}
 
 	function _logPromptPrefix() {
-		console.log(` »`)
+		console.log(`»`)
 	}
 }

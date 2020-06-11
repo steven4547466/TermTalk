@@ -13,10 +13,7 @@ class Utils {
 			Utils.cachedConfig = JSON.parse(fs.readFileSync(`${os.userInfo().homedir}/termtalk/.termtalkconf.json`))
 			return Utils.cachedConfig
 		} else {
-			let conf = fs.readFileSync("./config.json")
-			fs.writeFileSync(`${os.userInfo().homedir}/termtalk/.termtalkconf.json`, conf);
-			Utils.cachedConfig = JSON.parse(conf)
-			return Utils.cachedConfig
+			return false
 		}
 	}
 
