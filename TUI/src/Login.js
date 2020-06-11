@@ -181,6 +181,8 @@ class LoginTUI {
 				form.reset()
 				screen.render()
 			} else {
+				process.stdout.write("\u001b[2J\u001b[0;0HLoading client...")
+				socket.removeAllListeners()
 				require("./Client").run(socket, data.user)
 				screen.destroy()
 			}

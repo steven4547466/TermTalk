@@ -106,8 +106,12 @@ form.on("submit", (data) => {
 		screen.render()
 	} else {
 		socket = io(data.ip.startsWith("http") ? data.ip : `http://${data.ip}`)
-		screen.destroy()
-		run()
+		process.stdout.write("\u001b[0;0HConnecting...")
+		socket.on('connect', () => {
+			socket.removeAllListeners()
+			Login.run(socket)
+			screen.destroy()
+		})
 	}
 })
 
@@ -116,10 +120,3 @@ screen.key(["q", "C-c"], () => {
 })
 
 screen.render()
-
-function run() {
-	socket.on('connect', () => {
-		socket.removeAllListeners()
-		Login.run(socket)
-	})
-}

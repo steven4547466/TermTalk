@@ -198,6 +198,7 @@ class RegisterTUI {
 				register.removeAllListeners()
 				form.removeAllListeners()
 				socket.removeAllListeners()
+				process.stdout.write("\u001b[2J\u001b[0;0HLoading client...")
 				require("./Client").run(socket, data.user)
 				screen.destroy()
 			}
