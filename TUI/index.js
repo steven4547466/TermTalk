@@ -103,7 +103,7 @@ const savedIPs = blessed.list({
 	left: 'center',
 	width: "30%",
 	height: "60%",
-	items: Utils.config().ips,
+	items: Utils.config.ips,
 	tags: true,
 	keys: true,
 	border: {
@@ -117,13 +117,18 @@ const savedIPs = blessed.list({
 	    border: {
 			fg: "blue"
 		}
-  	}
+	}
 })
+
 const savedIPsLabel = blessed.text({
 	parent: screen,
 	top: 13,
 	left: "center",
 	content: "Saved IPs"
+})
+
+savedIPs.on("select", (data, index) => {
+	form.emit("submit", {ip:Utils.config.ips[index]})
 })
 
 connect.on("press", () => form.submit())
@@ -139,6 +144,7 @@ form.on("submit", (data) => {
 		socket = io(data.ip.startsWith("http") ? data.ip : `http://${data.ip}`)
 		process.stdout.write("\u001b[0;0HConnecting...")
 		socket.on('connect', () => {
+			Utils.addToIps(data.ip)
 			socket.removeAllListeners()
 			Login.run(socket)
 			screen.destroy()
