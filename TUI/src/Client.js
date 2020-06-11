@@ -88,6 +88,7 @@ class ClientTUI {
 
 		socket.on("kickEvent", (data) => {
 			messages.log(`${ClientTUI.textPrefix}${data.username}#${data.tag} > ${data.msg}${ClientTUI.textSuffix}`)
+			// TODO: Make this server-side
 			socket.close()
 		})
 
