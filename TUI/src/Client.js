@@ -20,11 +20,12 @@ const blessed = require("blessed")
 const contrib = require("blessed-contrib")
 const io = require("socket.io-client")
 const Login = require("./Login")
+const Utils = require("../../src/Utils")
 
 class ClientTUI {
 
-	static textPrefix = ""
-	static textSuffix = ""
+	static textPrefix = `{${Utils.config.chatColor}-fg}`
+	static textSuffix = `{/${Utils.config.chatColor}-fg}`
 
 	static run(socket, user) {
 		const screen = blessed.screen({
@@ -64,7 +65,7 @@ class ClientTUI {
 				type: "line"
 			},
 			style: {
-				fg: "green",
+				fg: Utils.config.chatColor,
 				border: {
 					fg: "blue"
 				}
@@ -122,6 +123,7 @@ class ClientTUI {
 		let colorRegex = /(#(\d|[a-f]){6})-text/i
 		let matches;
 		if(matches = colorRegex.exec(message)){ 
+			Utils.setMainTextColor(matches[1])
 			this.textPrefix = `{${matches[1]}-fg}`
 			this.textSuffix = `{/${matches[1]}-fg}`
 			messages.log(`${this.textPrefix}Messages now of color ${matches[1]}.${this.textSuffix}`)
