@@ -86,10 +86,14 @@ class ClientTUI {
 			messages.log(`{red-fg}Client > Attempting reconnect. #${attempt}{/red-fg}`)
 		})
 
-		socket.on("kickEvent", (data) => {
-			messages.log(`${ClientTUI.textPrefix}${data.username}#${data.tag} > ${data.msg}${ClientTUI.textSuffix}`)
-			// TODO: Make this server-side
-			socket.close()
+		socket.on("get_user_data", () => {
+			socket.emit("return_user_data", user)
+		})
+
+		socket.on("method_result", (data) => {
+			if(!data.success){
+				if(data.method == "messageSend") messages.log(`{red-fg}Client > ${data.message}{/red-fg}`)
+			}
 		})
 
 		screen.key(["q", "C-c"], () => {
