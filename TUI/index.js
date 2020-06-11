@@ -107,14 +107,14 @@ const savedIPs = blessed.list({
 	tags: true,
 	keys: true,
 	border: {
-    	type: "line"
+		type: "line"
 	},
 	style: {
 		selected: {
-    		fg: "white",
-    		bg: "blue"
-    	},
-	    border: {
+			fg: "white",
+			bg: "blue"
+		},
+		border: {
 			fg: "blue"
 		}
 	}
@@ -128,15 +128,15 @@ const savedIPsLabel = blessed.text({
 })
 
 savedIPs.on("select", (data, index) => {
-	form.emit("submit", {ip:Utils.config.ips[index]})
+	form.emit("submit", { ip: Utils.config.ips[index] })
 })
 
 connect.on("press", () => form.submit())
 
 form.on("submit", (data) => {
-	if(!data.ip) {
+	if (!data.ip) {
 		error.content = "{center}Please enter the IP and port to connect to.{/center}"
-		if(error.hidden) { 
+		if (error.hidden) {
 			error.toggle()
 		}
 		screen.render()

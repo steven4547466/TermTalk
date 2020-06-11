@@ -24,7 +24,7 @@ class RegisterTUI {
 			smartCSR: true,
 			title: "TermTalk Register"
 		})
-	
+
 		const form = blessed.form({
 			parent: screen,
 			width: "100%",
@@ -32,7 +32,7 @@ class RegisterTUI {
 			keys: true,
 			vi: true
 		})
-	
+
 		// Textbox Labels
 		const uidLabel = blessed.text({
 			parent: screen,
@@ -119,7 +119,7 @@ class RegisterTUI {
 			},
 			censor: true
 		})
-	
+
 		// Buttons
 		const register = blessed.button({
 			parent: form,
@@ -168,18 +168,18 @@ class RegisterTUI {
 		register.on('press', () => {
 			form.submit();
 		})
-	
+
 		form.on("submit", (data) => {
-			if(!data.uid || !data.password || !data.tag || !data.username) {
+			if (!data.uid || !data.password || !data.tag || !data.username) {
 				error.content = "{center}Please enter all the information.{/center}"
 				error.height = 4
-				if(error.hidden){ 
+				if (error.hidden) {
 					error.toggle()
 				}
 				form.reset()
 				screen.render()
 			} else {
-				if(!error.hidden){ 
+				if (!error.hidden) {
 					error.toggle()
 					screen.render()
 				}
@@ -191,7 +191,7 @@ class RegisterTUI {
 			if (!data.success) {
 				error.content = "{center}" + data.message + "{/center}"
 				error.height = 5
-				if(error.hidden) error.toggle()
+				if (error.hidden) error.toggle()
 				form.reset()
 				screen.render()
 			} else {

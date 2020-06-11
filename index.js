@@ -28,6 +28,7 @@ let loggedIn = false
 
 if(!Utils.config) fs.appendFileSync(`${require("os").userInfo().homedir}/termtalk/.termtalkconf.json`, JSON.stringify(defaultConfig, null, 4))
 if(args.includes("--tui")) return require("./tui/index.js")
+
 process.title = "TermTalk"
 
 new Input({
@@ -41,7 +42,7 @@ new Input({
 function run() {
 	let user;
 	socket.on('connect', async () => {
-		if(!loggedIn){
+		if (!loggedIn) {
 			console.log(`Connected to the server.`)
 			try {
 				const ans = await prompt({
@@ -56,7 +57,7 @@ function run() {
 				} else {
 					_login()
 				}
-			} catch(err) {
+			} catch (err) {
 				console.error(err)
 				process.exit(0)
 			}
@@ -76,13 +77,13 @@ function run() {
 					_awaitMessage()
 				}
 			})
-			
+
 			socket.on("method_result", (data) => {
-				if(!data.success){
+				if (!data.success) {
 					console.log("\u001b[31;1m" + data.message + "\u001b[0m")
 				}
 			})
-		}else{
+		} else {
 			_logPromptPrefix()
 		}
 
@@ -102,7 +103,7 @@ function run() {
 			console.log(`\u001b[1A\u001b[${process.stdout.columns}D\u001b[2K\n${data.username}#${data.tag} > ${data.msg}`)
 			_logPromptPrefix()
 		})
-	
+
 		socket.on("get_user_data", () => {
 			socket.emit("return_user_data", user)
 		})
@@ -115,7 +116,7 @@ function run() {
 	async function _awaitMessage() {
 		try {
 			let { msg } = await prompt({ type: "input", name: "msg", message: `\u001b[${process.stdout.columns}D\u001b ` })
-			socket.emit("msg", {msg, username: user.username, tag: user.tag, sessionID: user.sessionID })
+			socket.emit("msg", { msg, username: user.username, tag: user.tag, sessionID: user.sessionID })
 			_awaitMessage()
 		} catch (e) {
 			console.error(e)
@@ -147,7 +148,7 @@ function run() {
 				}
 			])
 			socket.emit("login", login)
-		} catch(e) {
+		} catch (e) {
 			console.error(e)
 			process.exit(0)
 		}
@@ -177,13 +178,13 @@ function run() {
 				}
 			])
 			socket.emit("register", reg)
-		} catch(e) {
+		} catch (e) {
 			console.error(e)
 			process.exit(0)
 		}
 	}
 
-	function _logPromptPrefix(){
-		console.log(` »`)
+	function _logPromptPrefix() {
+		console.log(`»`)
 	}
 }
