@@ -54,7 +54,7 @@ class ClientTUI {
 			}
 		})
 
-		const messageBox = blessed.textarea({
+		let messageBox = blessed.textarea({
 			parent: form,
 			name: "msg",
 			top: "94%",
@@ -77,7 +77,7 @@ class ClientTUI {
 		form.on("submit", () => {
 			const msg = sanitize(messageBox.getValue())
 			messageBox.clearValue()
-			if (this._handleCommands(msg.trim(), messages, screen)) return
+			if (this._handleCommands(msg.trim(), messages, screen, messageBox)) return
 			socket.emit("msg", { msg, username: user.username, tag: user.tag, uid: user.uid, sessionID: user.sessionID })
 			messages.log(`${this.textPrefix}${user.username}#${user.tag} > ${msg}${this.textSuffix}`)
 		})
@@ -99,11 +99,11 @@ class ClientTUI {
 			messages.log(`{red-fg}Client > Attempting reconnect. #${attempt}{/red-fg}`)
 		})
 
-		socket.on("get_user_data", () => {
+		socket.on("getUserData", () => {
 			socket.emit("return_user_data", user)
 		})
 
-		socket.on("method_result", (data) => {
+		socket.on("methodResult", (data) => {
 			if (!data.success) {
 				if (data.method == "messageSend") messages.log(`{red-fg}Client > ${data.message}{/red-fg}`)
 			}
@@ -116,17 +116,22 @@ class ClientTUI {
 		screen.render()
 	}
 
-	static _handleCommands(message, messageLog, screen) {
+	static _handleCommands(message, messageLog, screen, ...handleArgs) {
 		if (!message.startsWith("/")) return false
+
 		const command = message.slice(1).split(" ")[0]
 		const args = message.slice(command.length + 1).trim().split(" ")
+
 		let colorRegex = /(#(\d|[a-f]){6})/i
 		let matches;
+
 		if (matches = colorRegex.exec(message)) {
 			Utils.setMainTextColor(matches[1])
 			this.textPrefix = `{${matches[1]}-fg}`
 			this.textSuffix = `{/${matches[1]}-fg}`
-			messageLog.log(`${this.textPrefix}Messages now of color ${matches[1]}.${this.textSuffix}`)
+			handleArgs[0].style.fg = Utils.config.chatColor
+			messageLog.log(`${this.textPrefix}Messages are now the color ${matches[1]}.${this.textSuffix}`)
+
 			return true
 		} else if (command) {
 			switch (command) {

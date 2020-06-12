@@ -172,7 +172,7 @@ class LoginTUI {
 			}
 		})
 
-		socket.on("auth_result", (data) => {
+		socket.on("authResult", (data) => {
 			if (!data.success) {
 				error.content = "{center}" + data.message + "{/center}"
 				if (error.hidden) {

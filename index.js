@@ -62,7 +62,7 @@ function run() {
 				process.exit(0)
 			}
 
-			socket.on("auth_result", (data) => {
+			socket.on("authResult", (data) => {
 				if (!data.success) {
 					console.log("\u001b[31;1m" + data.message + "\u001b[0m")
 					if (data.method === "login") {
@@ -78,7 +78,7 @@ function run() {
 				}
 			})
 
-			socket.on("method_result", (data) => {
+			socket.on("methodResult", (data) => {
 				if (!data.success) {
 					console.log("\u001b[31;1m" + data.message + "\u001b[0m")
 				}
@@ -104,7 +104,7 @@ function run() {
 			_logPromptPrefix()
 		})
 
-		socket.on("get_user_data", () => {
+		socket.on("getUserData", () => {
 			socket.emit("return_user_data", user)
 		})
 
