@@ -47,9 +47,9 @@ class ClientTUI {
 			label: "Messages",
 			tags: true,
 			style: {
-				fg: "cyan",
+				fg: "green",
 				border: {
-					fg: "blue"
+					fg: "cyan"
 				}
 			},
 			screen: screen
@@ -68,7 +68,7 @@ class ClientTUI {
 			style: {
 				fg: Utils.config.chatColor,
 				border: {
-					fg: "blue"
+					fg: "cyan"
 				}
 			}
 		})
