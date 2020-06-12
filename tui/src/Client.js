@@ -41,18 +41,28 @@ class ClientTUI {
 			vi: true
 		})
 
-		const grid = new contrib.grid({ rows: 8, cols: 8, screen: screen })
+		const grid = new contrib.grid({ rows: 8, cols: 10, screen: screen })
 
-		const messages = grid.set(0, 0, 7.5, 7, contrib.log, {
+		const messages = grid.set(0, 0, 7.5, 8, contrib.log, {
 			label: "Messages",
 			tags: true,
 			style: {
-				fg: "cyan",
+				fg: "green",
 				border: {
-					fg: "blue"
+					fg: "cyan"
 				}
 			},
 			screen: screen
+		})
+		const members = grid.set(0, 8, 7.5, 2, contrib.log, {
+			label: "Members",
+			tags: true,
+			style: {
+				fg: "green",
+				border: {
+					fg: "cyan"
+				}
+			}
 		})
 
 		let messageBox = blessed.textarea({
@@ -68,7 +78,7 @@ class ClientTUI {
 			style: {
 				fg: Utils.config.chatColor,
 				border: {
-					fg: "blue"
+					fg: "cyan"
 				}
 			}
 		})

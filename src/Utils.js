@@ -42,7 +42,7 @@ class Utils {
 	}
 
 	static addToIps(ip) {
-		let config = Utils.cachedConfig
+		let config = Utils.config
 		if (config.ips.includes(ip)) return;
 		config.ips.push(ip)
 		this.overWriteConfig(config)
