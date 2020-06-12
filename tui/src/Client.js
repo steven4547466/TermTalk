@@ -133,7 +133,7 @@ class ClientTUI {
 			} else {
 				if (data.method == "getMemberList") {
 					this.memberList = data.memberList
-					this._updateMemberList(/*memberListBox*/)
+					this._updateMemberList(members)
 				}
 			}
 		})
@@ -143,12 +143,12 @@ class ClientTUI {
 			if (data.method == "userConnect") {
 				if (this.memberList.indexOf(data.user) != -1) return
 				this.memberList.push(data.user)
-				this._updateMemberList(/*memberListBox*/)
+				this._updateMemberList(members)
 			} else if (data.method == "userDisconnect") {
 				let index = this.memberList.indexOf(data.user)
 				if (index == -1) return
 				this.memberList.splice(index, 1)
-				this._updateMemberList(/*memberListBox*/)
+				this._updateMemberList(members)
 			}
 		})
 
@@ -159,8 +159,17 @@ class ClientTUI {
 		screen.render()
 	}
 
-	static _updateMemberList(memberListBox) {
-		// TODO: Make member list
+	static _updateMemberList(members) {
+		let list = JSON.parse(JSON.stringify(this.memberList)) // Deep cloning or we refrence the same list.
+		if(list.length > 30){
+			list.length = 30
+		}
+		for(let i = 0; i < list.length; i++){
+			list[i] = `${this.textPrefix}${list[i]}${this.textSuffix}`
+		}
+		members.logLines = list
+		members.setItems(members.logLines);
+  	members.scrollTo(members.logLines.length);
 	}
 
 	static _handleCommands(message, messageLog, screen, ...handleArgs) {
