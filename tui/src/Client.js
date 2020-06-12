@@ -26,6 +26,7 @@ class ClientTUI {
 
 	static textPrefix = `{${Utils.config.chatColor}-fg}`
 	static textSuffix = `{/${Utils.config.chatColor}-fg}`
+	static memberList = []
 
 	static run(socket, user) {
 		const screen = blessed.screen({
@@ -83,6 +84,12 @@ class ClientTUI {
 			}
 		})
 
+		socket.emit("method", {
+			type: "clientRequest",
+			method: "getMemberList",
+			...user
+		})
+
 		messageBox.key("enter", () => form.submit())
 
 		form.on("submit", () => {
@@ -105,6 +112,11 @@ class ClientTUI {
 
 		socket.on("reconnect", (attempt) => {
 			messages.log(`Client > Reconnected after ${attempt} attempt(s).`, "{red-fg}", "{/red-fg}")
+			socket.emit("method", {
+				type: "clientRequest",
+				method: "reconnected",
+				...user
+			})
 		})
 
 		socket.on("reconnect_attempt", (attempt) => {
@@ -117,7 +129,26 @@ class ClientTUI {
 
 		socket.on("methodResult", (data) => {
 			if (!data.success) {
-				if (data.method == "messageSend") messages.log(`Client > ${data.message.trim()}`, "{red-fg}", "{/red-fg}")
+				messages.log(`Client > ${data.message.trim()}`, "{red-fg}", "{/red-fg}")
+			} else {
+				if (data.method == "getMemberList") {
+					this.memberList = data.memberList
+					this._updateMemberList(/*memberListBox*/)
+				}
+			}
+		})
+
+		socket.on("method", (data) => {
+			if (data.type != "serverRequest") return
+			if (data.method == "userConnect") {
+				if (this.memberList.indexOf(data.user) != -1) return
+				this.memberList.push(data.user)
+				this._updateMemberList(/*memberListBox*/)
+			} else if (data.method == "userDisconnect") {
+				let index = this.memberList.indexOf(data.user)
+				if (index == -1) return
+				this.memberList.splice(index, 1)
+				this._updateMemberList(/*memberListBox*/)
 			}
 		})
 
@@ -126,6 +157,10 @@ class ClientTUI {
 		})
 
 		screen.render()
+	}
+
+	static _updateMemberList(memberListBox) {
+		// TODO: Make member list
 	}
 
 	static _handleCommands(message, messageLog, screen, ...handleArgs) {
