@@ -166,7 +166,9 @@ class ClientTUI {
 }
 
 function sanitize(text) {
-	return blessed.escape(text)
+	return text.replace(/[{}]/g, (ch) => {
+		return ch === '{' ? '\{' : '\}'
+	})
 }
 
 module.exports = ClientTUI;

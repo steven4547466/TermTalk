@@ -100,7 +100,7 @@ function run() {
 		})
 
 		socket.on('msg', (data) => {
-			console.log(`\u001b[1A\u001b[${process.stdout.columns}D\u001b[2K\n${data.username}#${data.tag} > ${data.msg}`)
+			console.log(`\u001b[1A\u001b[${process.stdout.columns}D\u001b[2K${data.username}#${data.tag} > ${data.msg}`)
 			_logPromptPrefix()
 		})
 
@@ -115,23 +115,14 @@ function run() {
 
 	async function _awaitMessage() {
 		try {
-			let { msg } = await prompt({ type: "input", name: "msg", message: `\u001b[${process.stdout.columns}D\u001b ` })
-			socket.emit("msg", { msg, username: user.username, tag: user.tag, sessionID: user.sessionID })
+			let { msg } = await prompt({ type: "input", name: "msg", message: `\u001b[${process.stdout.columns}D\u001b[2K` })
+			socket.emit("msg", { msg, uid: user.uid, username: user.username, tag: user.tag, sessionID: user.sessionID })
 			_awaitMessage()
 		} catch (e) {
 			console.error(e)
 			process.exit(0)
 		}
 	}
-
-	/*
-		TODO: Change this to some kind of socket.disconnect() on CTRL-C
-		That is the only way we can disconnect properly.
-
-	socket.on('disconnecting', function () {
-		socket.emit('disconnect', {sessionID:user.sessionID})
-	})
-	*/
 
 	async function _login() {
 		try {
