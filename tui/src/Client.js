@@ -167,9 +167,10 @@ class ClientTUI {
 		for(let i = 0; i < list.length; i++){
 			list[i] = `${this.textPrefix}${list[i]}${this.textSuffix}`
 		}
+		
 		members.logLines = list
 		members.setItems(members.logLines);
-  	members.scrollTo(members.logLines.length);
+  		members.scrollTo(members.logLines.length);
 	}
 
 	static _handleCommands(message, messageLog, screen, ...handleArgs) {
