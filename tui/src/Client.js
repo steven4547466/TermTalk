@@ -97,13 +97,13 @@ class ClientTUI {
 			messageBox.clearValue()
 			if (this._handleCommands(msg.trim(), messages, screen, messageBox)) return
 			socket.emit("msg", { msg, username: user.username, tag: user.tag, uid: user.uid, sessionID: user.sessionID })
-			messages.log(`${user.username}#${user.tag} > ${msg.trim()}`, this.textPrefix, this.textSuffix)
+			messages.log(`${new Date().toLocaleTimeString()} ${user.username}#${user.tag} > ${msg.trim()}`, this.textPrefix, this.textSuffix)
 		})
 
 		socket.on('msg', (data) => {
 			if (data.uid == user.uid) return
-			if (data.server) return messages.log(`{white-fg}${data.username}#${data.tag} > ${data.msg}{/white-fg}`, "{white-fg}", "{/white-fg}")
-			messages.log(`${data.username}#${data.tag} > ${data.msg}`, this.textPrefix, this.textSuffix)
+			if (data.server) return messages.log(`${new Date().toLocaleTimeString()} {white-fg}${data.username}#${data.tag} > ${data.msg}{/white-fg}`, "{white-fg}", "{/white-fg}")
+			messages.log(`${new Date().toLocaleTimeString()} ${data.username}#${data.tag} > ${data.msg}`, this.textPrefix, this.textSuffix)
 		})
 
 		socket.on("disconnect", () => {
@@ -167,9 +167,10 @@ class ClientTUI {
 		for(let i = 0; i < list.length; i++){
 			list[i] = `${this.textPrefix}${list[i]}${this.textSuffix}`
 		}
+		
 		members.logLines = list
 		members.setItems(members.logLines);
-  	members.scrollTo(members.logLines.length);
+  		members.scrollTo(members.logLines.length);
 	}
 
 	static _handleCommands(message, messageLog, screen, ...handleArgs) {
