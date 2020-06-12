@@ -84,6 +84,7 @@ class ClientTUI {
 
 		socket.on('msg', (data) => {
 			if (data.uid == user.uid) return
+			if (data.server) return messages.log(`{white-fg}${data.username}#${data.tag} > ${data.msg}{/white-fg}`)
 			messages.log(`${this.textPrefix}${data.username}#${data.tag} > ${data.msg}${this.textSuffix}`)
 		})
 
