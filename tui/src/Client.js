@@ -53,7 +53,8 @@ class ClientTUI {
 					fg: "cyan"
 				}
 			},
-			screen: screen
+			screen: screen,
+			bufferLength: screen.height
 		})
 		const members = grid.set(0, 8, 7.5, 2, contrib.log, {
 			label: "Members",
@@ -63,7 +64,8 @@ class ClientTUI {
 				border: {
 					fg: "cyan"
 				}
-			}
+			},
+			bufferLength: screen.height
 		})
 
 		let messageBox = blessed.textarea({
@@ -84,6 +86,25 @@ class ClientTUI {
 			}
 		})
 
+		screen.on("resize", () => {
+			messages.options.bufferLength = screen.height
+			members.options.bufferLength = screen.height
+
+			while (messages.logLines.length > screen.height) {
+				messages.logLines.shift()
+			}
+
+			while (members.logLines.length > screen.height) {
+				members.logLines.shift()
+			}
+
+			messages.setItems(messages.logLines)
+			messages.scrollTo(messages.logLines.length)
+
+			members.setItems(members.logLines)
+			members.scrollTo(members.logLines.length)
+		})
+
 		socket.emit("method", {
 			type: "clientRequest",
 			method: "getMemberList",
@@ -97,13 +118,11 @@ class ClientTUI {
 			messageBox.clearValue()
 			if (this._handleCommands(msg.trim(), messages, screen, messageBox)) return
 			socket.emit("msg", { msg, username: user.username, tag: user.tag, uid: user.uid, sessionID: user.sessionID })
-			messages.log(`${new Date().toLocaleTimeString()} ${user.username}#${user.tag} > ${msg.trim()}`, this.textPrefix, this.textSuffix)
 		})
 
 		socket.on('msg', (data) => {
-			if (data.uid == user.uid) return
-			if (data.server) return messages.log(`${new Date().toLocaleTimeString()} {white-fg}${data.username}#${data.tag} > ${data.msg}{/white-fg}`, "{white-fg}", "{/white-fg}")
-			messages.log(`${new Date().toLocaleTimeString()} ${data.username}#${data.tag} > ${data.msg}`, this.textPrefix, this.textSuffix)
+			if (data.server) return messages.log(`{white-fg}${data.username}#${data.tag} > ${data.msg}{/white-fg}`, "{white-fg}", "{/white-fg}")
+			messages.log(`${data.username}#${data.tag} > ${data.msg}`, this.textPrefix, this.textSuffix)
 		})
 
 		socket.on("disconnect", () => {
@@ -161,16 +180,15 @@ class ClientTUI {
 
 	static _updateMemberList(members) {
 		let list = JSON.parse(JSON.stringify(this.memberList)) // Deep cloning or we refrence the same list.
-		if(list.length > 30){
+		if (list.length > 30) {
 			list.length = 30
 		}
-		for(let i = 0; i < list.length; i++){
+		for (let i = 0; i < list.length; i++) {
 			list[i] = `${this.textPrefix}${list[i]}${this.textSuffix}`
 		}
-		
 		members.logLines = list
-		members.setItems(members.logLines);
-  		members.scrollTo(members.logLines.length);
+		members.setItems(members.logLines)
+		members.scrollTo(members.logLines.length)
 	}
 
 	static _handleCommands(message, messageLog, screen, ...handleArgs) {
