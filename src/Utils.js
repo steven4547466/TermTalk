@@ -37,7 +37,7 @@ class Utils {
 
 	static overWriteConfig(newConfig) {
 		Utils.cachedConfig = newConfig
-		fs.writeFileSync(`${os.userInfo().homedir}/termtalk/.termtalkconf.json`, JSON.stringify(newConfig))
+		fs.writeFileSync(`${os.userInfo().homedir}/termtalk/.termtalkconf.json`, JSON.stringify(newConfig, null, 4))
 		return newConfig
 	}
 
