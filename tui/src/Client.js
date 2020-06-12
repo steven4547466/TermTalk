@@ -97,15 +97,15 @@ class ClientTUI {
 			messages.log(`Client > Reconnected after ${attempt} attempt(s).`, "{red-fg}", "{/red-fg}")
 		})
 
-		socket.on("reconnect_attempt", (attempt) => {
+		socket.on("reconnectAttempt", (attempt) => {
 			messages.log(`Client > Attempting reconnect. #${attempt}`, "{red-fg}", "{/red-fg}")
 		})
 
-		socket.on("get_user_data", () => {
-			socket.emit("return_user_data", user)
+		socket.on("getUserData", () => {
+			socket.emit("returnUserData", user)
 		})
 
-		socket.on("method_result", (data) => {
+		socket.on("methodResult", (data) => {
 			if (!data.success) {
 				if (data.method == "messageSend") messages.log(`Client > ${data.message.trim()}`, "{red-fg}", "{/red-fg}")
 			}
