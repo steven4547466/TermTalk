@@ -20,13 +20,13 @@
 const io = require('socket.io-client')
 const fs = require("fs")
 const { Input, prompt } = require('enquirer')
-const defaultConfig = require("./config.json")
+const defaultConfig = fs.readFileSync("config.json")
 const Utils = require("./src/Utils")
 
 const args = process.argv.slice(2).join(" ")
 let loggedIn = false
 
-if(!Utils.config) fs.appendFileSync(`${require("os").userInfo().homedir}/termtalk/.termtalkconf.json`, JSON.stringify(defaultConfig, null, 4))
+if(!Utils.config) fs.appendFileSync(`${require("os").userInfo().homedir}/termtalk/.termtalkconf.json`, defaultConfig)
 if(args.includes("--tui")) return require("./tui/index.js")
 
 process.title = "TermTalk"
@@ -62,7 +62,7 @@ function run() {
 				process.exit(0)
 			}
 
-			socket.on("auth_result", (data) => {
+			socket.on("authResult", (data) => {
 				if (!data.success) {
 					console.log("\u001b[31;1m" + data.message + "\u001b[0m")
 					if (data.method === "login") {
@@ -78,7 +78,7 @@ function run() {
 				}
 			})
 
-			socket.on("method_result", (data) => {
+			socket.on("methodResult", (data) => {
 				if (!data.success) {
 					console.log("\u001b[31;1m" + data.message + "\u001b[0m")
 				}
@@ -104,7 +104,7 @@ function run() {
 			_logPromptPrefix()
 		})
 
-		socket.on("get_user_data", () => {
+		socket.on("getUserData", () => {
 			socket.emit("return_user_data", user)
 		})
 

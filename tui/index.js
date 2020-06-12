@@ -38,7 +38,6 @@ const form = blessed.form({
 const error = blessed.box({
 	parent: screen,
 	left: "center",
-	top: 14,
 	width: "50%",
 	height: "10%",
 	content: " ",
