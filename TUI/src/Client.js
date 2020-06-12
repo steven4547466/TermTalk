@@ -49,7 +49,7 @@ class ClientTUI {
 			style: {
 				fg: "green",
 				border: {
-					fg: "blue"
+					fg: "cyan"
 				}
 			}
 		})
@@ -67,7 +67,7 @@ class ClientTUI {
 			style: {
 				fg: Utils.config.chatColor,
 				border: {
-					fg: "blue"
+					fg: "cyan"
 				}
 			}
 		})
@@ -116,23 +116,23 @@ class ClientTUI {
 		screen.render()
 	}
 
-	static _handleCommands(message, messages, screen) {
+	static _handleCommands(message, messageLog, screen) {
 		if (!message.startsWith("/")) return false
 		const command = message.slice(1).split(" ")[0]
 		const args = message.slice(command.length + 1).trim().split(" ")
-		let colorRegex = /(#(\d|[a-f]){6})-text/i
+		let colorRegex = /(#(\d|[a-f]){6})/i
 		let matches;
 		if (matches = colorRegex.exec(message)) {
 			Utils.setMainTextColor(matches[1])
 			this.textPrefix = `{${matches[1]}-fg}`
 			this.textSuffix = `{/${matches[1]}-fg}`
-			messages.log(`${this.textPrefix}Messages now of color ${matches[1]}.${this.textSuffix}`)
+			messageLog.log(`${this.textPrefix}Messages now of color ${matches[1]}.${this.textSuffix}`)
 			return true
 		} else if (command) {
 			switch (command) {
 				case "connect":
 					const newSocket = io(args[0].startsWith("http") ? args[0] : `http://${args[0]}`)
-					messages.log("Client > Connecting to different server...")
+					messageLog.log("Client > Connecting to different server...")
 					newSocket.on('connect', () => {
 						socket.disconnect()
 						socket.removeAllListeners()
