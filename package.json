@@ -1,6 +1,6 @@
 {
   "name": "termtalk",
-  "version": "0.1.66",
+  "version": "0.2.1",
   "description": "Talk to your peers in the terminal using TermTalk.",
   "main": "index.js",
   "scripts": {
@@ -26,7 +26,7 @@
   "homepage": "https://github.com/Terminalfreaks/TermTalk#readme",
   "dependencies": {
     "blessed": "^0.1.81",
-    "blessed-contrib": "^4.8.20",
+    "blessed-contrib": "git+https://github.com/Terminalfreaks/blessed-contrib",
     "enquirer": "^2.3.5",
     "socket.io-client": "^2.3.0"
   },
