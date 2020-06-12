@@ -97,7 +97,7 @@ class ClientTUI {
 			messages.log(`Client > Reconnected after ${attempt} attempt(s).`, "{red-fg}", "{/red-fg}")
 		})
 
-		socket.on("reconnectAttempt", (attempt) => {
+		socket.on("reconnect_attempt", (attempt) => {
 			messages.log(`Client > Attempting reconnect. #${attempt}`, "{red-fg}", "{/red-fg}")
 		})
 

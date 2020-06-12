@@ -105,7 +105,7 @@ function run() {
 		})
 
 		socket.on("getUserData", () => {
-			socket.emit("return_user_data", user)
+			socket.emit("returnUserData", user)
 		})
 
 		process.on("beforeExit", () => {
