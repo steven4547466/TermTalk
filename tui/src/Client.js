@@ -201,8 +201,11 @@ class ClientTUI {
 }
 
 function sanitize(text) {
+	// If you can find another way to do this, let me know, we've tried
+	// escaping it, zero width spaces, character codes.
+	return blessed.escape(text)
 	return text.replace(/[{}]/g, (ch) => {
-		return ch === '{' ? '\{' : '\}'
+		return ch === '{' ? '\u007B' : '\u007D'
 	})
 }
 
