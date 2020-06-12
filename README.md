@@ -11,6 +11,7 @@ soontm
 ```
 git clone https://github.com/Terminalfreaks/TermTalk
 cd TermTalk
+npm install
 npm link
 ```  
 Now you can run `termtalk` and `termtalk --tui` for the text-based ui.  

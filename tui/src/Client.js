@@ -51,7 +51,8 @@ class ClientTUI {
 				border: {
 					fg: "cyan"
 				}
-			}
+			},
+			screen: screen
 		})
 		const members = grid.set(0, 8, 7.5, 2, contrib.log, {
 			label: "Members",
@@ -89,34 +90,34 @@ class ClientTUI {
 			messageBox.clearValue()
 			if (this._handleCommands(msg.trim(), messages, screen, messageBox)) return
 			socket.emit("msg", { msg, username: user.username, tag: user.tag, uid: user.uid, sessionID: user.sessionID })
-			messages.log(`${this.textPrefix}${user.username}#${user.tag} > ${msg}${this.textSuffix}`)
+			messages.log(`${user.username}#${user.tag} > ${msg.trim()}`, this.textPrefix, this.textSuffix)
 		})
 
 		socket.on('msg', (data) => {
 			if (data.uid == user.uid) return
-			if (data.server) return messages.log(`{white-fg}${data.username}#${data.tag} > ${data.msg}{/white-fg}`)
-			messages.log(`${this.textPrefix}${data.username}#${data.tag} > ${data.msg}${this.textSuffix}`)
+			if (data.server) return messages.log(`{white-fg}${data.username}#${data.tag} > ${data.msg}{/white-fg}`, "{white-fg}", "{/white-fg}")
+			messages.log(`${data.username}#${data.tag} > ${data.msg}`, this.textPrefix, this.textSuffix)
 		})
 
 		socket.on("disconnect", () => {
-			messages.log(`{red-fg}Client > You have been disconnected.{/red-fg}`)
+			messages.log(`Client > You have been disconnected.`, "{red-fg}", "{/red-fg}")
 		})
 
 		socket.on("reconnect", (attempt) => {
-			messages.log(`{red-fg}Client > Reconnected after ${attempt} attempt(s).{/red-fg}`)
+			messages.log(`Client > Reconnected after ${attempt} attempt(s).`, "{red-fg}", "{/red-fg}")
 		})
 
 		socket.on("reconnect_attempt", (attempt) => {
-			messages.log(`{red-fg}Client > Attempting reconnect. #${attempt}{/red-fg}`)
+			messages.log(`Client > Attempting reconnect. #${attempt}`, "{red-fg}", "{/red-fg}")
 		})
 
 		socket.on("getUserData", () => {
-			socket.emit("return_user_data", user)
+			socket.emit("returnUserData", user)
 		})
 
 		socket.on("methodResult", (data) => {
 			if (!data.success) {
-				if (data.method == "messageSend") messages.log(`{red-fg}Client > ${data.message}{/red-fg}`)
+				if (data.method == "messageSend") messages.log(`Client > ${data.message.trim()}`, "{red-fg}", "{/red-fg}")
 			}
 		})
 
@@ -141,14 +142,14 @@ class ClientTUI {
 			this.textPrefix = `{${matches[1]}-fg}`
 			this.textSuffix = `{/${matches[1]}-fg}`
 			handleArgs[0].style.fg = Utils.config.chatColor
-			messageLog.log(`${this.textPrefix}Messages are now the color ${matches[1]}.${this.textSuffix}`)
+			messageLog.log(`Messages are now the color ${matches[1]}.`, this.textPrefix, this.textSuffix)
 
 			return true
 		} else if (command) {
 			switch (command) {
 				case "connect":
 					const newSocket = io(args[0].startsWith("http") ? args[0] : `http://${args[0]}`)
-					messageLog.log("Client > Connecting to different server...")
+					messageLog.log("Client > Connecting to different server...", this.textPrefix, this.textSuffix)
 					newSocket.on('connect', () => {
 						socket.disconnect()
 						socket.removeAllListeners()
@@ -165,7 +166,7 @@ class ClientTUI {
 }
 
 function sanitize(text) {
-	return text.replace(/\{/g, "{ ")
+	return blessed.escape(text)
 }
 
 module.exports = ClientTUI;
