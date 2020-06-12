@@ -18,38 +18,37 @@
 
 const fs = require("fs")
 const os = require("os")
-
+let configCache;
 class Utils {
-	static cachedConfig = null
 
 	static get config() {
-		if (Utils.cachedConfig) {
-			return Utils.cachedConfig
+		if (configCache) {
+			return configCache
 		}
 		if (!fs.existsSync(`${os.userInfo().homedir}/termtalk`)) fs.mkdirSync(`${os.userInfo().homedir}/termtalk`)
 		if (fs.existsSync(`${os.userInfo().homedir}/termtalk/.termtalkconf.json`)) {
-			Utils.cachedConfig = JSON.parse(fs.readFileSync(`${os.userInfo().homedir}/termtalk/.termtalkconf.json`))
-			return Utils.cachedConfig
+			configCache = JSON.parse(fs.readFileSync(`${os.userInfo().homedir}/termtalk/.termtalkconf.json`))
+			return configCache
 		} else {
 			return false
 		}
 	}
 
 	static overWriteConfig(newConfig) {
-		Utils.cachedConfig = newConfig
+		configCache = newConfig
 		fs.writeFileSync(`${os.userInfo().homedir}/termtalk/.termtalkconf.json`, JSON.stringify(newConfig, null, 4))
 		return newConfig
 	}
 
 	static addToIps(ip) {
-		let config = Utils.config
+		let config = this.config
 		if (config.ips.includes(ip)) return;
 		config.ips.push(ip)
 		this.overWriteConfig(config)
 	}
 
 	static setMainTextColor(color) {
-		let config = Utils.config
+		let config = this.config
 		config.chatColor = color
 		this.overWriteConfig(config)
 	}
