@@ -122,7 +122,7 @@ class ClientTUI {
 			const msg = sanitize(messageBox.getValue())
 			messageBox.clearValue()
 			if (this._handleCommands(msg.trim(), messages, screen, {messageBox, connectedIP})) return
-			socket.emit("msg", { msg, username: user.username, tag: user.tag, uid: user.uid, sessionID: user.sessionID })
+			socket.emit("msg", { msg, username: user.username, tag: user.tag, uid: user.uid, id: user.id, sessionID: user.sessionID })
 		})
 
 		socket.on('msg', (data) => {
@@ -244,19 +244,25 @@ class ClientTUI {
 					})
 					
 					newSocket.on('connect', () => {
-						socket.close(true)
-						socket.removeAllListeners()
-						newSocket.removeAllListeners()
-						Login.run(newSocket, args[0])
-						screen.destroy()
+						newSocket.on("methodResult", (d) => {
+							if(!d.success) {
+								messageLog.log(`Client > Connecting failed: ${d.message}`, this.textPrefix, this.textSuffix)
+							} else {
+								Utils.addToIps(args[0])
+								socket.close(true)
+								socket.removeAllListeners()
+								newSocket.removeAllListeners()
+								Login.run(newSocket, args[0])
+								screen.destroy()
+							}
+						})
 					})
-
 					return true
-					break;
+				break;
 
 				default:
 					return false
-					break;
+				break;
 			}
 		}
 		return false
