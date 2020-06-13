@@ -126,20 +126,22 @@ class ClientTUI {
 		})
 
 		socket.on('msg', (data) => {
-			if (data.server) return messages.log(`{white-fg}${data.username}#${data.tag} > ${data.msg}{/white-fg}`, "{white-fg}", "{/white-fg}")
-			messages.log(`${data.username}#${data.tag} > ${data.msg}`, this.textPrefix, this.textSuffix)
+			if (data.server) return messages.log(`${this._getTime()} {white-fg}${data.username}#${data.tag} > ${data.msg}{/white-fg}`, "{white-fg}", "{/white-fg}")
+			let reg = new RegExp(`(@${user.username}#${user.tag})`, "g")
+			data.msg = data.msg.replace(reg, "{inverse}$1{/inverse}")
+			messages.log(`${this._getTime()} ${data.username}#${data.tag} > ${data.msg}`, this.textPrefix, this.textSuffix)
 		})
 
 		socket.on("disconnect", () => {
-			messages.log(`Client > You have been disconnected.`, "{red-fg}", "{/red-fg}")
+			messages.log(`${this._getTime()} Client > You have been disconnected.`, "{red-fg}", "{/red-fg}")
 		})
 
 		socket.on("reconnect", (attempt) => {
-			messages.log(`Client > Reconnected after ${attempt} attempt(s).`, "{red-fg}", "{/red-fg}")
+			messages.log(`${this._getTime()} Client > Reconnected after ${attempt} attempt(s).`, "{red-fg}", "{/red-fg}")
 		})
 
 		socket.on("reconnect_attempt", (attempt) => {
-			messages.log(`Client > Attempting reconnect. #${attempt}`, "{red-fg}", "{/red-fg}")
+			messages.log(`${this._getTime()} Client > Attempting reconnect. #${attempt}`, "{red-fg}", "{/red-fg}")
 		})
 
 		socket.on("getUserData", () => {
@@ -148,7 +150,7 @@ class ClientTUI {
 
 		socket.on("methodResult", (data) => {
 			if (!data.success) {
-				messages.log(`Client > ${data.message.trim()}`, "{red-fg}", "{/red-fg}")
+				messages.log(`${this._getTime()} Client > ${data.message.trim()}`, "{red-fg}", "{/red-fg}")
 			} else {
 				if (data.method == "getMemberList") {
 					this.memberList = data.memberList
@@ -181,15 +183,15 @@ class ClientTUI {
 	static _updateMemberList(members) {
 		let list = JSON.parse(JSON.stringify(this.memberList)) // Deep cloning or we refrence the same list.
 		let index
-		if ((index = list.findIndex(t => !t.includes("#") && t.includes("lurker(s)"))) !== -1){
+		if ((index = list.findIndex(t => !t.includes("#") && t.includes("lurker(s)"))) !== -1) {
 			list.splice(0, 0, list.splice(index, 1)[0])
 		}
 
 		if (list.length > members.options.bufferLength) {
 			list.length = members.options.bufferLength
 		}
-		
-		if(!list[0].includes("#") && list[0].includes("lurker(s)")){
+
+		if (!list[0].includes("#") && list[0].includes("lurker(s)")) {
 			list.splice(list.length - 1, 0, list.splice(0, 1)[0])
 		}
 
@@ -221,28 +223,47 @@ class ClientTUI {
 			return true
 		} else if (command) {
 			switch (command) {
-				// TODO: FIX THIS COMMAND
-				// It doesn't disconnect from the first socket.
-				/*
 				case "connect":
-					const newSocket = io(args[0].startsWith("http") ? args[0] : `http://${args[0]}`)
+					if (!args[0]) {
+						messageLog.log("Client > No IP provided.", "{red-fg}", "{/red-fg}")
+						return true
+					}
+					const reconnectionAttempts = 3
+					const newSocket = io(args[0].startsWith("http") ? args[0] : `http://${args[0]}`, { timeout: 5000, reconnectionAttempts })
 					messageLog.log("Client > Connecting to different server...", this.textPrefix, this.textSuffix)
+
+					let attempt = 0
+
+					newSocket.on("connect_error", () => {
+						messageLog.log(`Client > Unable to establish connection to the server attempt: ${++attempt}.`, "{red-fg}", "{/red-fg}")
+						if (attempt == reconnectionAttempts) {
+							messageLog.log(`Client > Unable to establish connect to server after ${attempt} attempts.`, "{red-fg}", "{/red-fg}")
+							newSocket.close(true)
+							newSocket.removeAllListeners()
+						}
+					})
+					
 					newSocket.on('connect', () => {
-						socket.disconnect()
+						socket.close(true)
 						socket.removeAllListeners()
-						Login.run(newSocket, handleArgs.connectedIP)
+						newSocket.removeAllListeners()
+						Login.run(newSocket, args[0])
 						screen.destroy()
 					})
+
 					return true
 					break;
-					*/
 
 				default:
 					return false
-				break;
+					break;
 			}
 		}
 		return false
+	}
+
+	static _getTime() {
+		return `[${new Intl.DateTimeFormat({}, {timeStyle: "short", hour12: true}).format(new Date())}]`
 	}
 }
 
