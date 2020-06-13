@@ -19,7 +19,7 @@
 const blessed = require("blessed")
 
 class LoginTUI {
-	static run(socket) {
+	static run(socket, connectedIP) {
 		const screen = blessed.screen({
 			smartCSR: true,
 			title: "TermTalk Login"
@@ -67,6 +67,12 @@ class LoginTUI {
 			left: "center",
 			content: "Password: "
 		})
+		const connectedIPText = blessed.text({
+			parent: screen,
+			top: 0,
+			content: `Connected to ${connectedIP}`
+		})
+
 
 		// Textboxes
 		const username = blessed.textarea({
@@ -152,7 +158,7 @@ class LoginTUI {
 			login.removeAllListeners()
 			socket.removeAllListeners()
 			form.removeAllListeners()
-			require("./Register").run(socket)
+			require("./Register").run(socket, connectedIP)
 			screen.destroy()
 		})
 
@@ -183,7 +189,7 @@ class LoginTUI {
 			} else {
 				process.stdout.write("\u001b[2J\u001b[0;0HLoading client...")
 				socket.removeAllListeners()
-				require("./Client").run(socket, data.user)
+				require("./Client").run(socket, data.user, connectedIP)
 				screen.destroy()
 			}
 		})

@@ -28,7 +28,7 @@ class ClientTUI {
 	static textSuffix = `{/${Utils.config.chatColor}-fg}`
 	static memberList = []
 
-	static run(socket, user) {
+	static run(socket, user, connectedIP) {
 		const screen = blessed.screen({
 			smartCSR: true,
 			title: "TermTalk Client"
@@ -42,9 +42,14 @@ class ClientTUI {
 			vi: true
 		})
 
-		const grid = new contrib.grid({ rows: 8, cols: 10, screen: screen })
+		const connectedIPText = blessed.text({
+			parent: screen,
+			top: 0,
+			content: ` Connected to: ${connectedIP}.`
+		})
 
-		const messages = grid.set(0, 0, 7.5, 8, contrib.log, {
+		const grid = new contrib.grid({ rows: 10, cols: 10, screen: screen })
+		const messages = grid.set(0.5, 0, 9, 8, contrib.log, {
 			label: "Messages",
 			tags: true,
 			style: {
@@ -56,7 +61,7 @@ class ClientTUI {
 			screen: screen,
 			bufferLength: screen.height
 		})
-		const members = grid.set(0, 8, 7.5, 2, contrib.log, {
+		const members = grid.set(0.5, 8, 9, 2, contrib.log, {
 			label: "Members",
 			tags: true,
 			style: {
@@ -116,7 +121,7 @@ class ClientTUI {
 		form.on("submit", () => {
 			const msg = sanitize(messageBox.getValue())
 			messageBox.clearValue()
-			if (this._handleCommands(msg.trim(), messages, screen, messageBox)) return
+			if (this._handleCommands(msg.trim(), messages, screen, {messageBox, connectedIP})) return
 			socket.emit("msg", { msg, username: user.username, tag: user.tag, uid: user.uid, sessionID: user.sessionID })
 		})
 
@@ -197,7 +202,7 @@ class ClientTUI {
 		members.scrollTo(members.logLines.length)
 	}
 
-	static _handleCommands(message, messageLog, screen, ...handleArgs) {
+	static _handleCommands(message, messageLog, screen, handleArgs) {
 		if (!message.startsWith("/")) return false
 
 		const command = message.slice(1).split(" ")[0]
@@ -210,24 +215,31 @@ class ClientTUI {
 			Utils.setMainTextColor(matches[1])
 			this.textPrefix = `{${matches[1]}-fg}`
 			this.textSuffix = `{/${matches[1]}-fg}`
-			handleArgs[0].style.fg = Utils.config.chatColor
+			handleArgs.messageBox.style.fg = Utils.config.chatColor
 			messageLog.log(`Messages are now the color ${matches[1]}.`, this.textPrefix, this.textSuffix)
 
 			return true
 		} else if (command) {
 			switch (command) {
+				// TODO: FIX THIS COMMAND
+				// It doesn't disconnect from the first socket.
+				/*
 				case "connect":
 					const newSocket = io(args[0].startsWith("http") ? args[0] : `http://${args[0]}`)
 					messageLog.log("Client > Connecting to different server...", this.textPrefix, this.textSuffix)
 					newSocket.on('connect', () => {
 						socket.disconnect()
 						socket.removeAllListeners()
-						Login.run(newSocket)
+						Login.run(newSocket, handleArgs.connectedIP)
 						screen.destroy()
 					})
 					return true
+					break;
+					*/
+
 				default:
 					return false
+				break;
 			}
 		}
 		return false

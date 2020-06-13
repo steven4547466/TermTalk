@@ -19,7 +19,7 @@
 const blessed = require("blessed")
 
 class RegisterTUI {
-	static run(socket) {
+	static run(socket, connectedIP) {
 		const screen = blessed.screen({
 			smartCSR: true,
 			title: "TermTalk Register"
@@ -61,7 +61,11 @@ class RegisterTUI {
 			left: "center",
 			content: "Password: "
 		})
-
+		const connectedIPText = blessed.text({
+			parent: screen,
+			top: 0,
+			content: ` Connected to: ${connectedIP}.`
+		})
 		// Textboxes
 		const uid = blessed.textarea({
 			parent: form,

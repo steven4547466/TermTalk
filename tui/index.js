@@ -143,10 +143,20 @@ form.on("submit", (data) => {
 		socket = io(data.ip.startsWith("http") ? data.ip : `http://${data.ip}`)
 		process.stdout.write("\u001b[0;0HConnecting...")
 		socket.on('connect', () => {
-			Utils.addToIps(data.ip)
-			socket.removeAllListeners()
-			Login.run(socket)
-			screen.destroy()
+			socket.on("methodResult", (d) => {
+				if(!d.success) {
+					error.content = `{center}${d.message}{/center}`
+					if (error.hidden) {
+						error.toggle()
+					}
+					screen.render()
+				} else {
+					Utils.addToIps(data.ip)
+					socket.removeAllListeners()
+					Login.run(socket, data.ip)
+					screen.destroy()
+				}
+			})
 		})
 	}
 })
