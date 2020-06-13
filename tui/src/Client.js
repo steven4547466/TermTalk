@@ -131,11 +131,6 @@ class ClientTUI {
 
 		socket.on("reconnect", (attempt) => {
 			messages.log(`Client > Reconnected after ${attempt} attempt(s).`, "{red-fg}", "{/red-fg}")
-			socket.emit("method", {
-				type: "clientRequest",
-				method: "reconnected",
-				...user
-			})
 		})
 
 		socket.on("reconnect_attempt", (attempt) => {
@@ -180,12 +175,23 @@ class ClientTUI {
 
 	static _updateMemberList(members) {
 		let list = JSON.parse(JSON.stringify(this.memberList)) // Deep cloning or we refrence the same list.
-		if (list.length > 30) {
-			list.length = 30
+		let index
+		if ((index = list.findIndex(t => !t.includes("#") && t.includes("lurker(s)"))) !== -1){
+			list.splice(0, 0, list.splice(index, 1)[0])
 		}
+
+		if (list.length > members.options.bufferLength) {
+			list.length = members.options.bufferLength
+		}
+		
+		if(!list[0].includes("#") && list[0].includes("lurker(s)")){
+			list.splice(list.length - 1, 0, list.splice(0, 1)[0])
+		}
+
 		for (let i = 0; i < list.length; i++) {
 			list[i] = `${this.textPrefix}${list[i]}${this.textSuffix}`
 		}
+
 		members.logLines = list
 		members.setItems(members.logLines)
 		members.scrollTo(members.logLines.length)
