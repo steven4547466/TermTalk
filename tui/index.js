@@ -157,10 +157,20 @@ form.on("submit", (data) => {
 		})
 		
 		socket.on('connect', () => {
-			Utils.addToIps(data.ip)
-			socket.removeAllListeners()
-			Login.run(socket)
-			screen.destroy()
+			socket.on("methodResult", (d) => {
+				if(!d.success) {
+					error.content = `{center}${d.message}{/center}`
+					if (error.hidden) {
+						error.toggle()
+					}
+					screen.render()
+				} else {
+					Utils.addToIps(data.ip)
+					socket.removeAllListeners()
+					Login.run(socket, data.ip)
+					screen.destroy()
+				}
+			})
 		})
 	}
 })
