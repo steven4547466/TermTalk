@@ -4,10 +4,15 @@ To use TermTalk you need to host a server of your own. The server can be located
 
 It is still being developed but is currently very usable, and even has password hashing!
 
+## Server
+Our Discord server can be located here: https://discord.gg/GBzFGPe  
+The official TermTalk server ip is there too :^)  
+
 # Screenshot
 soontm
 
 # Installation
+**(CLI is a little bit broken at the moment)**
 ```
 git clone https://github.com/Terminalfreaks/TermTalk
 cd TermTalk
