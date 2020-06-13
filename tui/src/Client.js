@@ -122,7 +122,7 @@ class ClientTUI {
 			const msg = sanitize(messageBox.getValue())
 			messageBox.clearValue()
 			if (this._handleCommands(msg.trim(), messages, screen, {messageBox, connectedIP})) return
-			socket.emit("msg", { msg, username: user.username, tag: user.tag, uid: user.uid, sessionID: user.sessionID })
+			socket.emit("msg", { msg, username: user.username, tag: user.tag, uid: user.uid, id: user.id, sessionID: user.sessionID })
 		})
 
 		socket.on('msg', (data) => {
