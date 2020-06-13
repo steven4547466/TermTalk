@@ -1,0 +1,2 @@
+# Deciding to make or modify a client
+So you've decided that you want to make a client (or modify an existing one), luckily because the server is open source (and server owners should tell you if they've modify the server instance) it's quite easy. However, instead of reverse engineering the existing client and server, we provide easy documentation of how unmodified servers work so you know how to make a client.

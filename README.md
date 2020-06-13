@@ -40,3 +40,5 @@ Once you do either one the server provides you with information to use for sendi
 The server sends session ID, your username, your tag and account name. You **need** to send session ID or the server will not accept your message and send an error.  
 
 I'll get into more detail with what the server sends later.
+
+Check out [creating a client](creating_a_client.md)
