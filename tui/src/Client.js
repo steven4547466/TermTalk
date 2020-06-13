@@ -244,19 +244,25 @@ class ClientTUI {
 					})
 					
 					newSocket.on('connect', () => {
-						socket.close(true)
-						socket.removeAllListeners()
-						newSocket.removeAllListeners()
-						Login.run(newSocket, args[0])
-						screen.destroy()
+						newSocket.on("methodResult", (d) => {
+							if(!d.success) {
+								messageLog.log(`Client > Connecting failed: ${d.message}`, this.textPrefix, this.textSuffix)
+							} else {
+								Utils.addToIps(args[0])
+								socket.close(true)
+								socket.removeAllListeners()
+								newSocket.removeAllListeners()
+								Login.run(newSocket, args[0])
+								screen.destroy()
+							}
+						})
 					})
-
 					return true
-					break;
+				break;
 
 				default:
 					return false
-					break;
+				break;
 			}
 		}
 		return false
