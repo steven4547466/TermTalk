@@ -223,9 +223,6 @@ class ClientTUI {
 			return true
 		} else if (command) {
 			switch (command) {
-				// TODO: FIX THIS COMMAND
-				// It doesn't disconnect from the first socket.
-				/*
 				case "connect":
 					if (!args[0]) {
 						messageLog.log("Client > No IP provided.", "{red-fg}", "{/red-fg}")
@@ -247,20 +244,19 @@ class ClientTUI {
 					})
 					
 					newSocket.on('connect', () => {
-						socket.disconnect()
+						socket.close(true)
 						socket.removeAllListeners()
 						newSocket.removeAllListeners()
-						Login.run(newSocket)
+						Login.run(newSocket, args[0])
 						screen.destroy()
 					})
 
 					return true
 					break;
-					*/
 
 				default:
 					return false
-				break;
+					break;
 			}
 		}
 		return false
