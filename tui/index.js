@@ -140,7 +140,7 @@ form.on("submit", (data) => {
 		}
 		screen.render()
 	} else {
-		const reconnectionAttempts = 3
+		const reconnectionAttempts = 5
 		socket = io(data.ip.startsWith("http") ? data.ip : `http://${data.ip}`, { timeout: 5000, reconnectionAttempts })
 
 		process.stdout.write("\u001b[0;0HConnecting...")
@@ -148,9 +148,9 @@ form.on("submit", (data) => {
 		let attempt = 0
 		
 		socket.on("connect_error", () => {
-			process.stdout.write(`Unable to establish connection to the server attempt: ${++attempt}.`)
+			process.stdout.write(`\u001b[0;0HUnable to establish connection to the server. Attempt ${++attempt}/${reconnectionAttempts}.`)
 			if (attempt == reconnectionAttempts) {
-				process.stdout.write(`Unable to establish connect to server after ${attempt} attempts.`)
+				process.stdout.write(`\u001b[0;0H\u001b[2KUnable to establish connect to server after ${attempt} attempts.`)
 				socket.close(true)
 				socket.removeAllListeners()
 			}
