@@ -126,22 +126,22 @@ class ClientTUI {
 		})
 
 		socket.on('msg', (data) => {
-			if (data.server) return messages.log(`{white-fg}${data.username}#${data.tag} > ${data.msg}{/white-fg}`, "{white-fg}", "{/white-fg}")
+			if (data.server) return messages.log(`${this._getTime()} {white-fg}${data.username}#${data.tag} > ${data.msg}{/white-fg}`, "{white-fg}", "{/white-fg}")
 			let reg = new RegExp(`(@${user.username}#${user.tag})`, "g")
 			data.msg = data.msg.replace(reg, "{inverse}$1{/inverse}")
-			messages.log(`${data.username}#${data.tag} > ${data.msg}`, this.textPrefix, this.textSuffix)
+			messages.log(`${this._getTime()} ${data.username}#${data.tag} > ${data.msg}`, this.textPrefix, this.textSuffix)
 		})
 
 		socket.on("disconnect", () => {
-			messages.log(`Client > You have been disconnected.`, "{red-fg}", "{/red-fg}")
+			messages.log(`${this._getTime()} Client > You have been disconnected.`, "{red-fg}", "{/red-fg}")
 		})
 
 		socket.on("reconnect", (attempt) => {
-			messages.log(`Client > Reconnected after ${attempt} attempt(s).`, "{red-fg}", "{/red-fg}")
+			messages.log(`${this._getTime()} Client > Reconnected after ${attempt} attempt(s).`, "{red-fg}", "{/red-fg}")
 		})
 
 		socket.on("reconnect_attempt", (attempt) => {
-			messages.log(`Client > Attempting reconnect. #${attempt}`, "{red-fg}", "{/red-fg}")
+			messages.log(`${this._getTime()} Client > Attempting reconnect. #${attempt}`, "{red-fg}", "{/red-fg}")
 		})
 
 		socket.on("getUserData", () => {
@@ -150,7 +150,7 @@ class ClientTUI {
 
 		socket.on("methodResult", (data) => {
 			if (!data.success) {
-				messages.log(`Client > ${data.message.trim()}`, "{red-fg}", "{/red-fg}")
+				messages.log(`${this._getTime()} Client > ${data.message.trim()}`, "{red-fg}", "{/red-fg}")
 			} else {
 				if (data.method == "getMemberList") {
 					this.memberList = data.memberList
@@ -260,6 +260,10 @@ class ClientTUI {
 			}
 		}
 		return false
+	}
+
+	static _getTime() {
+		return `[${new Intl.DateTimeFormat({}, {timeStyle: "short", hour12: true}).format(new Date())}]`
 	}
 }
 
