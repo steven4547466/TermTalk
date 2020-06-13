@@ -131,11 +131,6 @@ class ClientTUI {
 
 		socket.on("reconnect", (attempt) => {
 			messages.log(`Client > Reconnected after ${attempt} attempt(s).`, "{red-fg}", "{/red-fg}")
-			// socket.emit("method", {
-			// 	type: "clientRequest",
-			// 	method: "reconnected",
-			// 	...user
-			// })
 		})
 
 		socket.on("reconnect_attempt", (attempt) => {
