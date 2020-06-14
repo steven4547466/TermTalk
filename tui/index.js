@@ -144,6 +144,11 @@ const savedIPsLabel = blessed.text({
 	content: "Saved IPs"
 })
 
+pingSavedIPs()
+setInterval(() => {
+	pingSavedIPs()
+}, 5000)
+
 savedIPs.on("select", (data, index) => {
 	form.emit("submit", { ip: Utils.config.ips[index] })
 })
@@ -198,3 +203,59 @@ screen.key(["q", "C-c"], () => {
 })
 
 screen.render()
+
+async function pingSavedIPs(){
+	let names = []
+	for(let i = 0; i < Utils.config.ips.length; i++){
+		let data
+		try{
+			data = await pingIP(...Utils.config.ips[i].split(":"))
+		}catch(e){
+			data = {
+				name: `${ip}:${port}`,
+				ip: ip,
+				port: port,
+				members: "unk",
+				maxMembers: "unk"
+			}
+		}
+		names.push(`${data.name} : ${data.members}/${data.maxMembers}`)
+	}
+	savedIPs.setItems(names)
+}
+
+function pingIP(ip, port){
+	return new Promise((resolve) => {
+		http.get(`http://${ip}:${port}/ping`, res => {
+			const status = res.statusCode
+			if (status === 200) {
+				res.setEncoding("utf8")
+				let raw = ""
+
+				res.on("data", (d) => raw += d)
+
+				res.on("end", () => {
+					try {
+						return resolve(JSON.parse(raw))
+					} catch (e) { 
+						return resolve({
+							name: `${ip}:${port}`,
+							ip: ip,
+							port: port,
+							members: "unk",
+							maxMembers: "unk"
+						})
+					}
+				})
+			}
+		}).on("error", () => {
+			return resolve({
+				name: `${ip}:${port}`,
+				ip: ip,
+				port: port,
+				members: "unk",
+				maxMembers: "unk"
+			})
+		})
+	})
+}
