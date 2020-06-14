@@ -16,11 +16,29 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+const http = require("http")
 const io = require("socket.io-client")
 const blessed = require("blessed")
 const fs = require("fs")
 const Login = require("./src/Login")
 const Utils = require("../src/Utils")
+
+let publicServers = null
+http.get("http://termtalkservers.is-just-a.dev:7680/list", res => {
+	const status = res.statusCode
+	if (status === 200) {
+		res.setEncoding("utf8")
+		let raw = ""
+
+		res.on("data", (d) => raw += d)
+
+		res.on("end", () => {
+			try {
+				publicServers = JSON.parse(raw)
+			} catch (e) { }
+		})
+	}
+})
 
 const screen = blessed.screen({
 	smartCSR: true,
@@ -144,9 +162,9 @@ form.on("submit", (data) => {
 		socket = io(data.ip.startsWith("http") ? data.ip : `http://${data.ip}`, { timeout: 5000, reconnectionAttempts })
 
 		process.stdout.write("\u001b[0;0HConnecting...")
-		
+
 		let attempt = 0
-		
+
 		socket.on("connect_error", () => {
 			process.stdout.write(`\u001b[0;0HUnable to establish connection to the server. Attempt ${++attempt}/${reconnectionAttempts}.`)
 			if (attempt == reconnectionAttempts) {
@@ -155,10 +173,10 @@ form.on("submit", (data) => {
 				socket.removeAllListeners()
 			}
 		})
-		
+
 		socket.on('connect', () => {
 			socket.on("methodResult", (d) => {
-				if(!d.success) {
+				if (!d.success) {
 					error.content = `{center}${d.message}{/center}`
 					if (error.hidden) {
 						error.toggle()
