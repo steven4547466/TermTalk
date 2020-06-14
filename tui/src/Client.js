@@ -51,7 +51,7 @@ class ClientTUI {
 		})
 
 		pingIP(connectedIP).then(t => {
-			connectedIPText.setContent(`Connected to ${t.name}.`)
+			connectedIPText.setContent(`${t.secure ? "Securely connected " : "Connected"} to ${t.name}.`)
 		})
 
 		const grid = new contrib.grid({ rows: 10, cols: 10, screen: screen })

@@ -229,7 +229,7 @@ async function pingSavedIPs() {
 				maxMembers: "unk"
 			}
 		}
-		names.push(`${data.name} : ${data.members}/${data.maxMembers}`)
+		names.push(`${data.name} : ${data.members}/${data.maxMembers} ${data.secure ? "Secure" : ""}`)
 	}
 	savedIPs.setItems(names)
 }
