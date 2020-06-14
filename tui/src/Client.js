@@ -16,6 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+const http = require("http")
 const blessed = require("blessed")
 const contrib = require("blessed-contrib")
 const io = require("socket.io-client")
@@ -46,6 +47,10 @@ class ClientTUI {
 			parent: screen,
 			top: 0,
 			content: ` Connected to: ${connectedIP}.`
+		})
+
+		pingIP(connectedIP).then(t => {
+			connectedIPText.setContent(`Connected to ${t.name}.`)
 		})
 
 		const grid = new contrib.grid({ rows: 10, cols: 10, screen: screen })
@@ -126,7 +131,7 @@ class ClientTUI {
 		})
 
 		socket.on('msg', (data) => {
-			if (data.server) return messages.log(`${this._getTime()} {white-fg}${data.username}#${data.tag} > ${data.msg}{/white-fg}`, "{white-fg}", "{/white-fg}")
+			if (data.server) return messages.log(`${data.loadHistory ? "" : this._getTime()} {white-fg}${data.username}#${data.tag} > ${data.msg}{/white-fg}`, "{white-fg}", "{/white-fg}")
 			let reg = new RegExp(`(@${user.username}#${user.tag})`, "g")
 			data.msg = data.msg.replace(reg, "{inverse}$1{/inverse}")
 			messages.log(`${this._getTime()} ${data.username}#${data.tag} > ${data.msg}`, this.textPrefix, this.textSuffix)
@@ -279,6 +284,42 @@ function sanitize(text) {
 	return blessed.escape(text)
 	return text.replace(/[{}]/g, (ch) => {
 		return ch === '{' ? '\u007B' : '\u007D'
+	})
+}
+
+function pingIP(ip){
+	return new Promise((resolve) => {
+		http.get(`http://${ip}/ping`, res => {
+			const status = res.statusCode
+			if (status === 200) {
+				res.setEncoding("utf8")
+				let raw = ""
+
+				res.on("data", (d) => raw += d)
+
+				res.on("end", () => {
+					try {
+						return resolve(JSON.parse(raw))
+					} catch (e) { 
+						return resolve({
+							name: `${ip}:${port}`,
+							ip: ip,
+							port: port,
+							members: "unk",
+							maxMembers: "unk"
+						})
+					}
+				})
+			}
+		}).on("error", () => {
+			return resolve({
+				name: `${ip}:${port}`,
+				ip: ip,
+				port: port,
+				members: "unk",
+				maxMembers: "unk"
+			})
+		})
 	})
 }
 
