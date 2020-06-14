@@ -134,9 +134,9 @@ class ClientTUI {
 		const messageRegex = /(?<mention>@[A-Za-z0-9_].+?#[0-9]{4})/g
 		socket.on('msg', (data) => {
 			if (data.server) return messages.log(`${this._getTime()} {white-fg}${data.username}#${data.tag} > ${data.msg}{/white-fg}`, "{white-fg}", "{/white-fg}")
-			let message;
+			let message = ""
 
-			let match;
+			let match
 			let prefix = this.textPrefix
 			let suffix = this.textSuffix
 			let	matchingMessage = data.msg
