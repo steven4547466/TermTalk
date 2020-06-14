@@ -121,13 +121,14 @@ class ClientTUI {
 		const messageRegex = /(?<mention>@[A-Za-z0-9_].+?#[0-9]{4})/g
 		socket.on('msg', (data) => {
 			if (data.server) return messages.log(`${this._getTime()} {white-fg}${data.username}#${data.tag} > ${data.msg}{/white-fg}`, "{white-fg}", "{/white-fg}")
-			let message = ""
+			let message;
 
-			let match,
-				prefix = this.textPrefix,
-				suffix = this.textSuffix,
-				matchingMessage = data.msg,
-				cursorSpot = 0
+			let match;
+			let prefix = this.textPrefix
+			let suffix = this.textSuffix
+			let	matchingMessage = data.msg
+			let	cursorSpot = 0
+			
 			while (match = messageRegex.exec(matchingMessage)) {
 				message += matchingMessage.substring(0, match.index)
 				cursorSpot = match.index
@@ -274,9 +275,11 @@ class ClientTUI {
 						})
 					})
 					return true
+				break;
 
 				default:
 					return false
+				break;
 			}
 		}
 		return false
