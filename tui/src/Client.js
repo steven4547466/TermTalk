@@ -17,6 +17,7 @@
 */
 
 const http = require("http")
+const https = require("https")
 const blessed = require("blessed")
 const contrib = require("blessed-contrib")
 const io = require("socket.io-client")
@@ -293,9 +294,9 @@ function sanitize(text) {
 	})
 }
 
-function pingIP(ip){
+function pingIP(ip) {
 	return new Promise((resolve) => {
-		http.get(`http://${ip}/ping`, res => {
+		https.get(`https://${ip}/ping`, res => {
 			const status = res.statusCode
 			if (status === 200) {
 				res.setEncoding("utf8")
@@ -306,9 +307,9 @@ function pingIP(ip){
 				res.on("end", () => {
 					try {
 						return resolve(JSON.parse(raw))
-					} catch (e) { 
+					} catch (e) {
 						return resolve({
-							name: `${ip}:${port}`,
+							name: ip,
 							ip: ip,
 							port: port,
 							members: "unk",
@@ -318,12 +319,36 @@ function pingIP(ip){
 				})
 			}
 		}).on("error", () => {
-			return resolve({
-				name: `${ip}:${port}`,
-				ip: ip,
-				port: port,
-				members: "unk",
-				maxMembers: "unk"
+			http.get(`http://${ip}/ping`, res => {
+				const status = res.statusCode
+				if (status === 200) {
+					res.setEncoding("utf8")
+					let raw = ""
+
+					res.on("data", (d) => raw += d)
+
+					res.on("end", () => {
+						try {
+							return resolve(JSON.parse(raw))
+						} catch (e) {
+							return resolve({
+								name: ip,
+								ip: ip,
+								port: port,
+								members: "unk",
+								maxMembers: "unk"
+							})
+						}
+					})
+				}
+			}).on("error", () => {
+				return resolve({
+					name: ip,
+					ip: ip,
+					port: port,
+					members: "unk",
+					maxMembers: "unk"
+				})
 			})
 		})
 	})
