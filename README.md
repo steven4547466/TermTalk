@@ -6,7 +6,7 @@ It is still being developed but is currently very usable, and even has password 
 
 ## Server
 Our Discord server can be located here: https://discord.gg/GBzFGPe  
-The official TermTalk server ip is there too :^)  
+I can't actually host a TermTalk server but you can find others there.
 
 # Screenshot
 soontm
