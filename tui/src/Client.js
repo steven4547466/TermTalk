@@ -23,7 +23,6 @@ const Login = require("./Login")
 const Utils = require("../../src/Utils")
 
 class ClientTUI {
-
 	static textPrefix = `{${Utils.config.chatColor}-fg}`
 	static textSuffix = `{/${Utils.config.chatColor}-fg}`
 	static memberList = []
@@ -40,12 +39,6 @@ class ClientTUI {
 			left: "center",
 			keys: true,
 			vi: true
-		})
-
-		const connectedIPText = blessed.text({
-			parent: screen,
-			top: 0,
-			content: ` Connected to: ${connectedIP}.`
 		})
 
 		const grid = new contrib.grid({ rows: 10, cols: 10, screen: screen })
@@ -125,11 +118,35 @@ class ClientTUI {
 			socket.emit("msg", { msg, username: user.username, tag: user.tag, uid: user.uid, id: user.id, sessionID: user.sessionID })
 		})
 
+		const messageRegex = /(?<mention>@[A-Za-z0-9_].+?#[0-9]{4})/g
 		socket.on('msg', (data) => {
 			if (data.server) return messages.log(`${this._getTime()} {white-fg}${data.username}#${data.tag} > ${data.msg}{/white-fg}`, "{white-fg}", "{/white-fg}")
-			let reg = new RegExp(`(@${user.username}#${user.tag})`, "g")
-			data.msg = data.msg.replace(reg, "{inverse}$1{/inverse}")
-			messages.log(`${this._getTime()} ${data.username}#${data.tag} > ${data.msg}`, this.textPrefix, this.textSuffix)
+			let message;
+
+			let match;
+			let prefix = this.textPrefix
+			let suffix = this.textSuffix
+			let	matchingMessage = data.msg
+			let	cursorSpot = 0
+			
+			while (match = messageRegex.exec(matchingMessage)) {
+				message += matchingMessage.substring(0, match.index)
+				cursorSpot = match.index
+
+				let matchedStr = match[0]
+				if (match.groups.mention) {
+					message += `{inverse}${matchedStr}{/inverse}`
+					if (matchedStr === `@${user.username}#${user.tag}`) {
+						prefix = "{yellow-bg}{white-fg}"
+						suffix = "{/yellow-bg}{/white-fg}"
+					}
+				}
+
+				matchingMessage = matchingMessage.substring(match.index + matchedStr.length)
+			}
+			message += matchingMessage
+
+			messages.log(`${this._getTime()} ${data.username}#${data.tag} > ${message}`, prefix, suffix)
 		})
 
 		socket.on("disconnect", () => {
@@ -242,7 +259,7 @@ class ClientTUI {
 							newSocket.removeAllListeners()
 						}
 					})
-					
+
 					newSocket.on('connect', () => {
 						newSocket.on("methodResult", (d) => {
 							if(!d.success) {
