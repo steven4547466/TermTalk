@@ -67,11 +67,12 @@ If registering is `successful`, the server will emit an event called `authResult
     uid: "AwesomeSauce",
     username: "SlickSauce",
     tag: "4560",
+    id: 10704219761807360,
     sessionID: "61890e5a66b07491504c"
   }
 }
 ```
-The main part you should focus on is the `user` property as it contains the `sessionID` you'll need to remember for this session only (**session ids are refreshed on every new connect except reconnects**), however the other data there is helpful to know if the registration was successful.
+The main part you should focus on is the `user` property as it contains the `sessionID` you'll need to remember for this session only (**session ids are refreshed on every new connect except reconnects**), however the other data there is helpful to know if the registration was successful, such as `id`. It isn't used (currently) but the server still sends it.
 
 A `failed` register will emit the same event (`authResult`) with other data. The main part you'll need to look at is the `success` property, but a standard (user caused) failed register will look like this:
 ```js
@@ -113,6 +114,7 @@ However, it should look like this:
     uid: "AwesomeSauce",
     username: "SlickSauce",
     tag: "4560",
+    id: 10704219761807360,
     sessionID: "ec2b3298dc836bbebcd4"
   }
 }
@@ -148,7 +150,8 @@ The main thing the client will do is sending messages. While not as simple as se
   msg: "Wacky message", 
   username: "SlickSauce", 
   tag: "4560", 
-  uid: "AwesomeSauce", 
+  uid: "AwesomeSauce",
+  id: 10704219761807360,
   sessionID: "ec2b3298dc836bbebcd4"
 }
 ```
@@ -193,7 +196,8 @@ When you first connect and get the user data, you should emit a `method` event w
   method: "getMemberList",
   username: "SlickSauce", 
   tag: "4560", 
-  uid: "AwesomeSauce", 
+  uid: "AwesomeSauce",
+  id: 10704219761807360,
   sessionID: "ec2b3298dc836bbebcd4"
 }
 ```
