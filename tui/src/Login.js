@@ -76,7 +76,7 @@ class LoginTUI {
 		})
 
 		pingIP(connectedIP).then(t => {
-			connectedIPText.setContent(`${t.secure ? "Securely connected " : "Connected"} to ${t.name}.`)
+			connectedIPText.setContent(`${t.secure ? "Securely connected" : "Connected"} to ${t.name}.`)
 		})
 
 
