@@ -72,7 +72,7 @@ If registering is `successful`, the server will emit an event called `authResult
   }
 }
 ```
-The main part you should focus on is the `user` property as it contains the `sessionID` you'll need to remember for this session only (**session ids are refreshed on every new connect except reconnects**), however the other data there is helpful to know if the registration was successful, such as `id`. It isn't used (currently) but the server still sends it.
+The main part you should focus on is the `user` property as it contains the `sessionID` you'll need to remember for this session only (**session ids are refreshed on every new connect except reconnects**), however the other data there is helpful to know if the registration was successful, such as `id`. It isn't used (currently) but will be used for server-side execution in the future.
 
 A `failed` register will emit the same event (`authResult`) with other data. The main part you'll need to look at is the `success` property, but a standard (user caused) failed register will look like this:
 ```js
@@ -157,7 +157,7 @@ The main thing the client will do is sending messages. While not as simple as se
 ```
 Everything in the above is required data (changing all the values to the proper values, though).
 
-If the message is successful at being sent, the server won't send a methodResult, instead (if the message isn't a server command, read more [here](#on-the-topic-of-server-commands)) the server will simple emit `msg` to all connected clients with the exact same data, but disregarding anything that isn't `msg`, `username`, `tag`, or `uid`. It is recommened to only log the client's message to the client if the server sends this back to them.
+If the message is successful at being sent, the server won't send a methodResult, instead (if the message isn't a server command, read more [here](#on-the-topic-of-server-commands)) the server will simply emit `msg` to all connected clients with the exact same data, but disregarding anything that isn't `msg`, `username`, `tag`, `id`, or `uid`. It is recommened to only log the client's message to the client if the server sends this back to them.
 
 However, the message may can be unsuccessful in sending. Assuming the message isn't a command, it can fail with any one of these `type`s: `insufficientData` (missing any of the required information), `invalidSessionID`, `invalidDataTypes` (any of the required data aren't of type `string`), `userIsLurking` (for more info on lurking, check out [lurking](#lurking)), `messageTooBig`, `serverLocked`, or `noMessageContent`.
 
