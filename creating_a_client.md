@@ -282,4 +282,4 @@ Along with the server list, version 0.3.0 also includes a new way to `ping` serv
 
 * The server list, while monitored, may contain servers with unsavory names. If you believe that it should be removed, join the [discord](https://discord.gg/GBzFGPe) and report it.
 
-* Pinging a server may not always return correct data if the server instance is modified, although we trust users to provide acurate data, be weary of the possibility of spoofing. 
+* Pinging a server may not always return correct data if the server instance is modified, although we trust users to provide accurate data, be weary of the possibility of spoofing. 
