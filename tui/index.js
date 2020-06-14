@@ -144,6 +144,14 @@ const savedIPsLabel = blessed.text({
 	content: "Saved IPs"
 })
 
+const secureBox = blessed.checkbox({
+	parent: form,
+	checked: false,
+	text: "Use SSL?",
+	left: "70%",
+	top: 6
+})
+
 pingSavedIPs()
 setInterval(() => {
 	pingSavedIPs()
@@ -164,7 +172,8 @@ form.on("submit", (data) => {
 		screen.render()
 	} else {
 		const reconnectionAttempts = 5
-		socket = io(data.ip.startsWith("http") ? data.ip : `http://${data.ip}`, { timeout: 5000, reconnectionAttempts })
+		const secure = secureBox.checked
+		socket = secure ? io(data.ip.startsWith("https") ? data.ip : `https://${data.ip}`, { timeout: 5000, reconnectionAttempts, secure }) : io(data.ip.startsWith("http") ? data.ip : `http://${data.ip}`, { timeout: 5000, reconnectionAttempts })
 
 		process.stdout.write("\u001b[0;0HConnecting...")
 
