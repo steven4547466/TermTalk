@@ -150,7 +150,7 @@ form.on("submit", (data) => {
 		socket.on("connect_error", () => {
 			process.stdout.write(`\u001b[0;0HUnable to establish connection to the server. Attempt ${++attempt}/${reconnectionAttempts}.`)
 			if (attempt == reconnectionAttempts) {
-				process.stdout.write(`\u001b[0;0H\u001b[2KUnable to establish connect to server after ${attempt} attempts.`)
+				process.stdout.write(`\u001b[0;0H\u001b[2KUnable to establish a connection to the server after ${attempt} attempts.`)
 				socket.close(true)
 				socket.removeAllListeners()
 			}
