@@ -156,7 +156,8 @@ const secureBox = blessed.checkbox({
 pingSavedIPs()
 setInterval(() => {
 	pingSavedIPs()
-}, 5000)
+	screen.render()
+}, 6000)
 
 savedIPs.on("select", (data, index) => {
 	form.emit("submit", { ip: Utils.config.ips[index] })

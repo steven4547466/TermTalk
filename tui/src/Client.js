@@ -51,6 +51,7 @@ class ClientTUI {
 
 		pingIP(connectedIP).then(t => {
 			connectedIPText.setContent(`${t.secure ? "Securely connected" : "Connected"} to ${t.name}.`)
+			screen.render()
 		})
 
 		const grid = new contrib.grid({ rows: 10, cols: 10, screen: screen })
@@ -199,7 +200,7 @@ class ClientTUI {
 				if (index == -1) return
 				this.memberList.splice(index, 1)
 				this._updateMemberList(members)
-			}else if(data.method == "sendChatHistory"){
+			} else if(data.method == "sendChatHistory") {
 				let start = data.history.length - screen.height
 				for(let i = start < 0 ? 0 : start; i < screen.height - 1; i++){
 					if(!data.history[i]) break
