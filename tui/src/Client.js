@@ -16,6 +16,8 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+const http = require("http")
+const https = require("https")
 const blessed = require("blessed")
 const contrib = require("blessed-contrib")
 const io = require("socket.io-client")
@@ -39,6 +41,16 @@ class ClientTUI {
 			left: "center",
 			keys: true,
 			vi: true
+		})
+
+		const connectedIPText = blessed.text({
+			parent: screen,
+			top: 0,
+			content: ` Connected to: ${connectedIP}.`
+		})
+
+		pingIP(connectedIP).then(t => {
+			connectedIPText.setContent(`${t.secure ? "Securely connected" : "Connected"} to ${t.name}.`)
 		})
 
 		const grid = new contrib.grid({ rows: 10, cols: 10, screen: screen })
@@ -187,6 +199,12 @@ class ClientTUI {
 				if (index == -1) return
 				this.memberList.splice(index, 1)
 				this._updateMemberList(members)
+			}else if(data.method == "sendChatHistory"){
+				let start = data.history.length - screen.height
+				for(let i = start < 0 ? 0 : start; i < screen.height - 1; i++){
+					if(!data.history[i]) break
+					messages.log(`${data.history[i].username}#${data.history[i].tag} > ${data.history[i].msg}`, "{white-fg}", "{/white-fg}")
+				}
 			}
 		})
 
@@ -296,6 +314,66 @@ function sanitize(text) {
 	return blessed.escape(text)
 	return text.replace(/[{}]/g, (ch) => {
 		return ch === '{' ? '\u007B' : '\u007D'
+	})
+}
+
+function pingIP(ip) {
+	return new Promise((resolve) => {
+		https.get(`https://${ip}/ping`, res => {
+			const status = res.statusCode
+			if (status === 200) {
+				res.setEncoding("utf8")
+				let raw = ""
+
+				res.on("data", (d) => raw += d)
+
+				res.on("end", () => {
+					try {
+						return resolve(JSON.parse(raw))
+					} catch (e) {
+						return resolve({
+							name: ip,
+							ip: ip,
+							port: port,
+							members: "unk",
+							maxMembers: "unk"
+						})
+					}
+				})
+			}
+		}).on("error", () => {
+			http.get(`http://${ip}/ping`, res => {
+				const status = res.statusCode
+				if (status === 200) {
+					res.setEncoding("utf8")
+					let raw = ""
+
+					res.on("data", (d) => raw += d)
+
+					res.on("end", () => {
+						try {
+							return resolve(JSON.parse(raw))
+						} catch (e) {
+							return resolve({
+								name: ip,
+								ip: ip,
+								port: port,
+								members: "unk",
+								maxMembers: "unk"
+							})
+						}
+					})
+				}
+			}).on("error", () => {
+				return resolve({
+					name: ip,
+					ip: ip,
+					port: port,
+					members: "unk",
+					maxMembers: "unk"
+				})
+			})
+		})
 	})
 }
 

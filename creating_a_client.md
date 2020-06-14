@@ -237,6 +237,18 @@ socket.on("getUserData", () => {
 ```
 If you don't do something similar, your `sessionID` will be forgotten by the server and you will always get an `invalidSessionID` error.
 
+##### Getting the message history
+
+On connect, if history saving is enabled, the server will emit a `method` with `type: "serverRequest"` and `method: "sendChatHistory"` to your client. The chat history will be in mapped to a key called `history` and will include up to, on a non-modified server instance, 100 messages. Newer messages always come later in the array. One message in the array would look like this:
+```js
+{
+  username: "[5:31 PM] SlickSauce",
+  tag: "4560",
+  msg: "TACOS!"
+}
+```
+You'll notice the timestamp is included in the username, this is for ease of logging for a non-modified client. However, you can always split the username by a space, then their username will be located at indecies greater than 1 (if they have spaces in their username, after splitting by space, it'd look like `["[5:31", "PM]", "SlickSauce"]`).
+
 ##### On the topic of server commands
 
 While this is one of the things servers are likely to change, commands generally work the same (server commands, we cannot document how you decide to make client commands).
@@ -248,3 +260,26 @@ When a client does a server command, a `msg` event will **not** be emitted (on s
 Lurking, on lurk enabled servers, allows a user to be "invisible" and does not show their name on the member list, instead shows that there are lurkers in the chat. Users that are lurking are unable to send messages to everyone, but can still use server commands (and if your client has any, most likely, client commands). On a successful lurk, the member list will be updated for all users, and the user will enter a lurking state. 
 
 If the server does not allow lurking, the server will emit a `methodResult` with `success: false`, `method: "lurkAttempt"`, and `type: "disallowedByServer"` being the most likely data sent through the event, along with a `message`.
+
+# The server list
+
+As of version 0.3.0, there is now a public server list accessible to all. To know how to make a public server, check out the server repo's creating a public server file. However if you want to get the server list, it's accessible to everyone. Simply make a `GET` request to `http://termtalkservers.is-just-a.dev:7680/list`. It will return a JSON array of servers that are publicly listed. You can display it to users however you want, though.
+
+### Note: Pinging servers
+
+Along with the server list, version 0.3.0 also includes a new way to `ping` servers that haven't manually disabled it. This returns data of the server such as their name, max slots, currently connected number of users, port, and their ip to connect to the server (which if you pinged it, you already had). To ping a server make a `GET` request to the server but with the path `/ping`. In this example, this URL would ping the Hub server: `http://chat.is-just-a.dev:3000/ping` it'd return data like this:
+```js
+{
+	members: 0,
+  maxMembers: 20,
+  name: "TermTalk Hub Server",
+  port: 3000,
+  ip: "chat.is-just-a.dev"
+}
+```
+
+##### NOTICES:
+
+* The server list, while monitored, may contain servers with unsavory names. If you believe that it should be removed, join the [discord](https://discord.gg/GBzFGPe) and report it.
+
+* Pinging a server may not always return correct data if the server instance is modified, although we trust users to provide accurate data, be weary of the possibility of spoofing. 

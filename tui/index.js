@@ -16,11 +16,30 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+const http = require("http")
+const https = require("https")
 const io = require("socket.io-client")
 const blessed = require("blessed")
 const fs = require("fs")
 const Login = require("./src/Login")
 const Utils = require("../src/Utils")
+
+let publicServers = null
+http.get("http://termtalkservers.is-just-a.dev:7680/list", res => {
+	const status = res.statusCode
+	if (status === 200) {
+		res.setEncoding("utf8")
+		let raw = ""
+
+		res.on("data", (d) => raw += d)
+
+		res.on("end", () => {
+			try {
+				publicServers = JSON.parse(raw)
+			} catch (e) { }
+		})
+	}
+})
 
 const screen = blessed.screen({
 	smartCSR: true,
@@ -126,6 +145,19 @@ const savedIPsLabel = blessed.text({
 	content: "Saved IPs"
 })
 
+const secureBox = blessed.checkbox({
+	parent: form,
+	checked: false,
+	text: "Use SSL?",
+	left: "70%",
+	top: 6
+})
+
+pingSavedIPs()
+setInterval(() => {
+	pingSavedIPs()
+}, 5000)
+
 savedIPs.on("select", (data, index) => {
 	form.emit("submit", { ip: Utils.config.ips[index] })
 })
@@ -141,12 +173,13 @@ form.on("submit", (data) => {
 		screen.render()
 	} else {
 		const reconnectionAttempts = 5
-		socket = io(data.ip.startsWith("http") ? data.ip : `http://${data.ip}`, { timeout: 5000, reconnectionAttempts })
+		const secure = secureBox.checked
+		socket = secure ? io(data.ip.startsWith("https") ? data.ip : `https://${data.ip}`, { timeout: 5000, reconnectionAttempts, secure }) : io(data.ip.startsWith("http") ? data.ip : `http://${data.ip}`, { timeout: 5000, reconnectionAttempts })
 
 		process.stdout.write("\u001b[0;0HConnecting...")
-		
+
 		let attempt = 0
-		
+
 		socket.on("connect_error", () => {
 			process.stdout.write(`\u001b[0;0HUnable to establish connection to the server. Attempt ${++attempt}/${reconnectionAttempts}.`)
 			if (attempt == reconnectionAttempts) {
@@ -155,10 +188,10 @@ form.on("submit", (data) => {
 				socket.removeAllListeners()
 			}
 		})
-		
+
 		socket.on('connect', () => {
 			socket.on("methodResult", (d) => {
-				if(!d.success) {
+				if (!d.success) {
 					error.content = `{center}${d.message}{/center}`
 					if (error.hidden) {
 						error.toggle()
@@ -180,3 +213,83 @@ screen.key(["q", "C-c"], () => {
 })
 
 screen.render()
+
+async function pingSavedIPs() {
+	let names = []
+	for (let i = 0; i < Utils.config.ips.length; i++) {
+		let data
+		try {
+			data = await pingIP(...Utils.config.ips[i].split(":"))
+		} catch (e) {
+			data = {
+				name: `${ip}:${port}`,
+				ip: ip,
+				port: port,
+				members: "unk",
+				maxMembers: "unk"
+			}
+		}
+		names.push(`${data.name} : ${data.members}/${data.maxMembers} ${data.secure ? "Secure" : ""}`)
+	}
+	savedIPs.setItems(names)
+}
+
+function pingIP(ip, port) {
+	return new Promise((resolve) => {
+		https.get(`https://${ip}:${port}/ping`, res => {
+			const status = res.statusCode
+			if (status === 200) {
+				res.setEncoding("utf8")
+				let raw = ""
+
+				res.on("data", (d) => raw += d)
+
+				res.on("end", () => {
+					try {
+						return resolve(JSON.parse(raw))
+					} catch (e) {
+						return resolve({
+							name: `${ip}:${port}`,
+							ip: ip,
+							port: port,
+							members: "unk",
+							maxMembers: "unk"
+						})
+					}
+				})
+			}
+		}).on("error", () => {
+			http.get(`http://${ip}:${port}/ping`, res => {
+				const status = res.statusCode
+				if (status === 200) {
+					res.setEncoding("utf8")
+					let raw = ""
+
+					res.on("data", (d) => raw += d)
+
+					res.on("end", () => {
+						try {
+							return resolve(JSON.parse(raw))
+						} catch (e) {
+							return resolve({
+								name: `${ip}:${port}`,
+								ip: ip,
+								port: port,
+								members: "unk",
+								maxMembers: "unk"
+							})
+						}
+					})
+				}
+			}).on("error", () => {
+				return resolve({
+					name: `${ip}:${port}`,
+					ip: ip,
+					port: port,
+					members: "unk",
+					maxMembers: "unk"
+				})
+			})
+		})
+	})
+}
