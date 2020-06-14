@@ -131,7 +131,7 @@ class ClientTUI {
 		})
 
 		socket.on('msg', (data) => {
-			if (data.server) return messages.log(`${data.loadHistory ? "" : this._getTime()} {white-fg}${data.username}#${data.tag} > ${data.msg}{/white-fg}`, "{white-fg}", "{/white-fg}")
+			if (data.server) return messages.log(`${data.loadHistory ? "" : this._getTime()} ${data.username}#${data.tag} > ${data.msg}`, "{white-fg}", "{/white-fg}")
 			let reg = new RegExp(`(@${user.username}#${user.tag})`, "g")
 			data.msg = data.msg.replace(reg, "{inverse}$1{/inverse}")
 			messages.log(`${this._getTime()} ${data.username}#${data.tag} > ${data.msg}`, this.textPrefix, this.textSuffix)
@@ -175,6 +175,12 @@ class ClientTUI {
 				if (index == -1) return
 				this.memberList.splice(index, 1)
 				this._updateMemberList(members)
+			}else if(data.method == "sendChatHistory"){
+				let start = data.history.length - screen.height
+				for(let i = start < 0 ? 0 : start; i < screen.height - 1; i++){
+					if(!data.history[i]) break
+					messages.log(`${data.history[i].username}#${data.history[i].tag} > ${data.history[i].msg}`, "{white-fg}", "{/white-fg}")
+				}
 			}
 		})
 
