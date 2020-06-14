@@ -72,7 +72,7 @@ If registering is `successful`, the server will emit an event called `authResult
   }
 }
 ```
-The main part you should focus on is the `user` property as it contains the `sessionID` you'll need to remember for this session only (**session ids are refreshed on every new connect except reconnects**), however the other data there is helpful to know if the registration was successful, such as `id`. It isn't used (currently) but the server still sends it.
+The main part you should focus on is the `user` property as it contains the `sessionID` you'll need to remember for this session only (**session ids are refreshed on every new connect except reconnects**), however the other data there is helpful to know if the registration was successful, such as `id`. It isn't used (currently) but will be used for server-side execution in the future.
 
 A `failed` register will emit the same event (`authResult`) with other data. The main part you'll need to look at is the `success` property, but a standard (user caused) failed register will look like this:
 ```js
