@@ -149,7 +149,7 @@ const secureBox = blessed.checkbox({
 	parent: form,
 	checked: false,
 	text: "Use SSL?",
-	left: "70%",
+	left: "73%",
 	top: 6
 })
 
