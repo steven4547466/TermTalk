@@ -334,8 +334,8 @@ function pingIP(ip) {
 					} catch (e) {
 						return resolve({
 							name: ip,
-							ip: ip,
-							port: port,
+							ip: ip.split(":")[0],
+							port: ip.split(":")[1],
 							members: "unk",
 							maxMembers: "unk"
 						})
@@ -357,8 +357,8 @@ function pingIP(ip) {
 						} catch (e) {
 							return resolve({
 								name: ip,
-								ip: ip,
-								port: port,
+								ip: ip.split(":")[0],
+								port: ip.split(":")[1],
 								members: "unk",
 								maxMembers: "unk"
 							})
@@ -368,8 +368,8 @@ function pingIP(ip) {
 			}).on("error", () => {
 				return resolve({
 					name: ip,
-					ip: ip,
-					port: port,
+					ip: ip.split(":")[0],
+					port: ip.split(":")[1],
 					members: "unk",
 					maxMembers: "unk"
 				})

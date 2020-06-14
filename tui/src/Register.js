@@ -17,6 +17,8 @@
 */
 
 const blessed = require("blessed")
+const http = require("http")
+const https = require("https")
 
 class RegisterTUI {
 	static run(socket, connectedIP) {
@@ -64,7 +66,11 @@ class RegisterTUI {
 		const connectedIPText = blessed.text({
 			parent: screen,
 			top: 0,
-			content: ` Connected to: ${connectedIP}.`
+			content: `Connected to: ${connectedIP}.`
+		})
+
+		pingIP(connectedIP).then(t => {
+			connectedIPText.setContent(`${t.secure ? "Securely connected" : "Connected"} to ${t.name}.`)
 		})
 		// Textboxes
 		const uid = blessed.textarea({
@@ -214,6 +220,66 @@ class RegisterTUI {
 
 		screen.render()
 	}
+}
+
+function pingIP(ip) {
+	return new Promise((resolve) => {
+		https.get(`https://${ip}/ping`, res => {
+			const status = res.statusCode
+			if (status === 200) {
+				res.setEncoding("utf8")
+				let raw = ""
+
+				res.on("data", (d) => raw += d)
+
+				res.on("end", () => {
+					try {
+						return resolve(JSON.parse(raw))
+					} catch (e) {
+						return resolve({
+							name: ip,
+							ip: ip.split(":")[0],
+							port: ip.split(":")[1],
+							members: "unk",
+							maxMembers: "unk"
+						})
+					}
+				})
+			}
+		}).on("error", () => {
+			http.get(`http://${ip}/ping`, res => {
+				const status = res.statusCode
+				if (status === 200) {
+					res.setEncoding("utf8")
+					let raw = ""
+
+					res.on("data", (d) => raw += d)
+
+					res.on("end", () => {
+						try {
+							return resolve(JSON.parse(raw))
+						} catch (e) {
+							return resolve({
+								name: ip,
+								ip: ip.split(":")[0],
+								port: ip.split(":")[1],
+								members: "unk",
+								maxMembers: "unk"
+							})
+						}
+					})
+				}
+			}).on("error", () => {
+				return resolve({
+					name: ip,
+					ip: ip.split(":")[0],
+					port: ip.split(":")[1],
+					members: "unk",
+					maxMembers: "unk"
+				})
+			})
+		})
+	})
 }
 
 module.exports = RegisterTUI;
