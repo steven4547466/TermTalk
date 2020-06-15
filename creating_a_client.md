@@ -295,7 +295,7 @@ If the server does not allow lurking, the server will emit a `methodResult` with
 
 # The server list
 
-As of version 0.3.0, there is now a public server list accessible to all. To know how to make a public server, check out the server repo's creating a public server file. However if you want to get the server list, it's accessible to everyone. Simply make a `GET` request to `http://termtalkservers.is-just-a.dev:7680/list`. It will return a JSON array of servers that are publicly listed. You can display it to users however you want, though.
+As of version 0.3.0, there is now a public server list accessible to all. To know how to make a public server, check out the server repo's creating a public server file. However if you want to get the server list, it's accessible to everyone. Simply make a `GET` request to `http://servers.termtalk.app/list`. It will return a JSON array of servers that are publicly listed. You can display it to users however you want, though.
 
 ### Note: Pinging servers
 
