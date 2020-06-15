@@ -213,7 +213,7 @@ If this is successful, the server will emit a `methodResult` event with the data
   memberList: []
 }
 ```
-The `memeberList` will contain all connected members. However, if this fails, usually due to a server error, you will get this data instead:
+The `memeberList` will contain all connected members (in the user's connected channel). However, if this fails, usually due to a server error, you will get this data instead:
 ```js
 {
   success: false,
@@ -224,6 +224,33 @@ The `memeberList` will contain all connected members. However, if this fails, us
 ```
 
 If it is successful, however, you should update your member list accordingly.
+
+##### Getting the channel list
+
+As of version 0.4.0, servers can set up channels. Getting the channel list is exactly like getting the member list, but some stuff is changed, the `method` should be `getChannelList` and it should look like:
+```js
+{
+  type: "clientRequest",
+  method: "getChannelList",
+  username: "SlickSauce", 
+  tag: "4560", 
+  uid: "AwesomeSauce",
+  id: 10704219761807360,
+  sessionID: "ec2b3298dc836bbebcd4"
+}
+```
+There is no coded way this can return anything other than a `success: true` method result, but it is worth noting that servers can modify their server instances.
+
+If everything goes well, you'll get a `methodResult` that looks like this:
+```js
+{
+  success: true,
+  method: "getChannelList",
+  type: "success",
+  message: "Successfully received the channel list.",
+  channelList: []
+}
+```
 
 ##### Properly reconnecting
 
@@ -236,6 +263,10 @@ socket.on("getUserData", () => {
 })
 ```
 If you don't do something similar, your `sessionID` will be forgotten by the server and you will always get an `invalidSessionID` error.
+
+###### NOTICE:
+
+**As of version 0.4.0, this only works for up to 5 minutes after disconnect (on unmodified server instances) and does not work on a server crash.** Users will **always** be reconnected to the main channel usually called General.
 
 ##### Getting the message history
 
