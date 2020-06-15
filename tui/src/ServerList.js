@@ -52,6 +52,7 @@ class ServerList {
       items: [],
       tags: true,
       keys: true,
+      scrollable: true,
       border: {
         type: "line"
       },
@@ -103,27 +104,27 @@ class ServerList {
       require("./Main").run()
     })
 
-    this._getList().then(async list => {
-      for (let i = 0; i < list.length; i++) {
-        let data = await this._pingIP(list[i])
-        this.names.push(`${data.name} : ${data.members}/${data.maxMembers} ${data.secure ? "Secure" : ""}`)
-      }
-      servers.setItems(this.names)
-      this.publicServers = list
-      screen.render()
-    })
-    setInterval(() => {
-      this.names = []
-      this._getList().then(async list => {
-        for (let i = 0; i < list.length; i++) {
-          let data = await this._pingIP(list[i])
-          this.names.push(`${data.name} : ${data.members}/${data.maxMembers} ${data.secure ? "Secure" : ""}`)
-        }
-        servers.setItems(this.names)
-        this.publicServers = list
-        screen.render()
-      })
-    }, 5000)
+    // this._getList().then(async list => {
+    //   for (let i = 0; i < list.length; i++) {
+    //     let data = await this._pingIP(list[i])
+    //     this.names.push(`${data.name} : ${data.members}/${data.maxMembers} ${data.secure ? "Secure" : ""}`)
+    //   }
+    //   servers.setItems(this.names)
+    //   this.publicServers = list
+    //   screen.render()
+    // })
+    // setInterval(() => {
+    //   this.names = []
+    //   this._getList().then(async list => {
+    //     for (let i = 0; i < list.length; i++) {
+    //       let data = await this._pingIP(list[i])
+    //       this.names.push(`${data.name} : ${data.members}/${data.maxMembers} ${data.secure ? "Secure" : ""}`)
+    //     }
+    //     servers.setItems(this.names)
+    //     this.publicServers = list
+    //     screen.render()
+    //   })
+    // }, 5000)
 
     screen.key(["q", "C-c"], () => {
       process.exit();
