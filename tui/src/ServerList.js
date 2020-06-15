@@ -187,7 +187,7 @@ class ServerList {
 
   static _getList() {
     return new Promise((resolve, reject) => {
-      http.get("http://termtalkservers.is-just-a.dev:7680/list", res => {
+      https.get("https://servers.termtalk.app:7680/list", res => {
         const status = res.statusCode
         if (status === 200) {
           res.setEncoding("utf8")
