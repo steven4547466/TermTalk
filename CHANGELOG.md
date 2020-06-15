@@ -10,6 +10,7 @@ This changelog is to note all changes that are notable as of June 15th and onwar
 ## Changed
 - Fixed server list.
 - Made TUI main client.
+- Fix the list... again
 
 ## Deprecated
 - The CLI is now deprecated and no longer developed or supported.
