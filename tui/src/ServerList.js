@@ -98,6 +98,8 @@ class ServerList {
 
     back.on("press", () => {
       screen.destroy()
+      this.names = []
+      servers.setItems([])
       require("./Main").run()
     })
 
@@ -147,6 +149,8 @@ class ServerList {
           } else {
             Utils.addToIps(ip)
             socket.removeAllListeners()
+            this.names = []
+            servers.setItems([])
             Login.run(socket, ip)
             screen.destroy()
           }
