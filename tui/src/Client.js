@@ -145,7 +145,7 @@ class ClientTUI {
 		messageBox.key("enter", () => form.submit())
 
 		form.on("submit", () => {
-			const msg = sanitize(messageBox.getValue())
+			const msg = messageBox.getValue()
 			messageBox.clearValue()
 			if (this._handleCommands(msg.trim(), messages, screen, {messageBox, connectedIP})) return
 			socket.emit("msg", { msg, username: user.username, tag: user.tag, uid: user.uid, id: user.id, sessionID: user.sessionID })
@@ -362,9 +362,8 @@ class ClientTUI {
 function sanitize(text) {
 	// If you can find another way to do this, let me know, we've tried
 	// escaping it, zero width spaces, character codes.
-	return blessed.escape(text)
-	return text.replace(/[{}]/g, (ch) => {
-		return ch === '{' ? '\u007B' : '\u007D'
+	return text.replace(/[{}]/g, function(ch) {
+		return ch === '{' ? '{open}' : '{/close}'
 	})
 }
 
