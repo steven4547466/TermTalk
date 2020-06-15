@@ -210,6 +210,11 @@ class ClientTUI {
 					messages.log(`${this._getTime()} Client > ${data.message.trim()}`, this.textPrefix, this.textSuffix)
 					messages.setLabel(`${data.channel} Messages`)
 					this.channel = data.channel
+					socket.emit("method", {
+						type: "clientRequest",
+						method: "getChannelList",
+						...user
+					})
 					screen.render()
 				}else if(data.method == "getChannelList"){
 					this.channelList = data.channelList
