@@ -56,7 +56,18 @@ class ClientTUI {
 		})
 
 		const grid = new contrib.grid({ rows: 10, cols: 10, screen: screen })
-		const messages = grid.set(0.5, 1.5, 9, 7.5, contrib.log, {
+		const channels = grid.set(0.5, 0, 9, 1, contrib.log, {
+			label: "Channels",
+			tags: true,
+			style: {
+				fg: "green",
+				border: {
+					fg: "cyan"
+				}
+			},
+			bufferLength: screen.height
+		})
+		const messages = grid.set(0.5, 1, 9, 7, contrib.log, {
 			label: "General Messages",
 			tags: true,
 			style: {
@@ -68,7 +79,7 @@ class ClientTUI {
 			screen: screen,
 			bufferLength: screen.height
 		})
-		const members = grid.set(0.5, 8, 9, 2, contrib.log, {
+		const members = grid.set(0.5, 7.95, 9, 2.1, contrib.log, {
 			label: "Members",
 			tags: true,
 			style: {
@@ -78,18 +89,7 @@ class ClientTUI {
 				}
 			},
 			bufferLength: screen.height
-		})
-		const channels = grid.set(0.5, 0, 9, 1.5, contrib.log, {
-			label: "Channels",
-			tags: true,
-			style: {
-				fg: "green",
-				border: {
-					fg: "cyan"
-				}
-			},
-			bufferLength: screen.height
-		})
+		})		
 
 		let messageBox = blessed.textarea({
 			parent: form,
