@@ -133,7 +133,8 @@ class Main {
 			height: "58%",
 			items: Utils.config.ips,
 			tags: true,
-			keys: true,
+      keys: true,
+      scrollable: true,
 			border: {
 				type: "line"
 			},
