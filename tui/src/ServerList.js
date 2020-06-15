@@ -52,6 +52,7 @@ class ServerList {
       items: [],
       tags: true,
       keys: true,
+      scrollable: true,
       border: {
         type: "line"
       },
@@ -96,19 +97,44 @@ class ServerList {
       }
     })
 
-    back.on("press", () => {
-      screen.destroy()
-      require("./Main").run()
-    })
-
     this._getList().then(async list => {
       for (let i = 0; i < list.length; i++) {
         let data = await this._pingIP(list[i])
+        if(data.members == "unk"){
+          list.splice(i, 1)
+          i--
+          continue
+        }
         this.names.push(`${data.name} : ${data.members}/${data.maxMembers} ${data.secure ? "Secure" : ""}`)
       }
       servers.setItems(this.names)
       this.publicServers = list
       screen.render()
+    })
+    let interval = setInterval(() => {
+      this.names = []
+      this._getList().then(async list => {
+        for (let i = 0; i < list.length; i++) {
+          let data = await this._pingIP(list[i])
+          if(data.members == "unk"){
+            list.splice(i, 1)
+            i--
+            continue
+          }
+          this.names.push(`${data.name} : ${data.members}/${data.maxMembers} ${data.secure ? "Secure" : ""}`)
+        }
+        servers.setItems(this.names)
+        this.publicServers = list
+        screen.render()
+      })
+    }, 5000)
+
+    back.on("press", () => {
+      clearInterval(interval)
+      screen.destroy()
+      this.names = []
+      servers.setItems([])
+      require("./Main").run()
     })
 
     screen.key(["q", "C-c"], () => {
@@ -145,8 +171,11 @@ class ServerList {
             }
             screen.render()
           } else {
+            clearInterval(interval)
             Utils.addToIps(ip)
             socket.removeAllListeners()
+            this.names = []
+            servers.setItems([])
             Login.run(socket, ip)
             screen.destroy()
           }
