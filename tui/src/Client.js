@@ -29,6 +29,7 @@ class ClientTUI {
 	static textSuffix = `{/${Utils.config.chatColor}-fg}`
 	static memberList = []
 	static channelList = []
+	static channel = "General"
 
 	static run(socket, user, connectedIP) {
 		const screen = blessed.screen({
@@ -208,6 +209,7 @@ class ClientTUI {
 					messages.logLines = []
 					messages.log(`${this._getTime()} Client > ${data.message.trim()}`, this.textPrefix, this.textSuffix)
 					messages.setLabel(`${data.channel} Messages`)
+					this.channel = data.channel
 					screen.render()
 				}else if(data.method == "getChannelList"){
 					this.channelList = data.channelList
@@ -251,7 +253,7 @@ class ClientTUI {
 		let list = JSON.parse(JSON.stringify(this.channelList)) // Deep cloning or we refrence the same list.
 		
 		for (let i = 0; i < list.length; i++) {
-			list[i] = `${this.textPrefix}${list[i]}${this.textSuffix}`
+			list[i] = `${list[i] == this.channel ? `{inverse}${list[i]}{inverse}` : `${this.textPrefix}${list[i]}${this.textSuffix}`}`
 		}
 
 		channels.logLines = list

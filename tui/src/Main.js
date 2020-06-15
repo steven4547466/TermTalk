@@ -26,6 +26,7 @@ const ServerList = require("./ServerList")
 const Utils = require("../../src/Utils")
 
 class Main {
+  static namedIPs = []
 	static run() {
 		const screen = blessed.screen({
 			smartCSR: true,
@@ -171,7 +172,7 @@ class Main {
 		}, 6000)
 
 		savedIPs.on("select", (data, index) => {
-			form.emit("submit", { ip: Utils.config.ips[index] })
+			form.emit("submit", { ip: Utils.config.ips[index], name: this.namedIPs[index] })
 		})
 
 		serverList.on("press", () => {
@@ -189,8 +190,8 @@ class Main {
 				}
 				screen.render()
 			} else {
-				const reconnectionAttempts = 5
-				const secure = secureBox.checked
+        const reconnectionAttempts = 5
+				const secure = secureBox.checked || (data.name && data.name.endsWith("Secure"))
 				let socket = secure ? io(data.ip.startsWith("https") ? data.ip : `https://${data.ip}`, { timeout: 5000, reconnectionAttempts, secure }) : io(data.ip.startsWith("http") ? data.ip : `http://${data.ip}`, { timeout: 5000, reconnectionAttempts })
 
 				process.stdout.write("\u001b[0;0HConnecting...")
@@ -198,9 +199,9 @@ class Main {
 				let attempt = 0
 
 				socket.on("connect_error", () => {
-					process.stdout.write(`\u001b[0;0HUnable to establish connection to the server. Attempt ${++attempt}/${reconnectionAttempts}.`)
+					process.stdout.write(`\u001b[0;0HUnable to establish connection to the server ${data.ip}. Attempt ${++attempt}/${reconnectionAttempts}.`)
 					if (attempt == reconnectionAttempts) {
-						process.stdout.write(`\u001b[0;0H\u001b[2KUnable to establish a connection to the server after ${attempt} attempts.`)
+						process.stdout.write(`\u001b[0;0H\u001b[2KUnable to establish a connection to the server (${data.ip}) after ${attempt} attempts.`)
 						socket.close(true)
 						socket.removeAllListeners()
 					}
@@ -249,6 +250,7 @@ class Main {
         names.push(`${data.name} : ${data.members}/${data.maxMembers} ${data.secure ? "Secure" : ""}`)
       }
       savedIPs.setItems(names)
+      Main.namedIPs = names
     }
     
     function _pingIP(ip, port) {
