@@ -266,7 +266,7 @@ If you don't do something similar, your `sessionID` will be forgotten by the ser
 
 ###### NOTICE:
 
-**As of version 0.4.0, this only works for up to 5 minutes after disconnect (on unmodified server instances) and does not work on a server crash.** Users will **always** be reconnected to the main channel usually called General.
+**As of version 0.4.0, this only works for up to 5 minutes after disconnect (on unmodified server instances).** Users will **always** be reconnected to the main channel usually called General.
 
 ##### Getting the message history
 
