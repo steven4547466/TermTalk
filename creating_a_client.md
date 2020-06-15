@@ -242,12 +242,13 @@ If you don't do something similar, your `sessionID` will be forgotten by the ser
 On connect, if history saving is enabled, the server will emit a `method` with `type: "serverRequest"` and `method: "sendChatHistory"` to your client. The chat history will be in mapped to a key called `history` and will include up to, on a non-modified server instance, 100 messages. Newer messages always come later in the array. One message in the array would look like this:
 ```js
 {
-  username: "[5:31 PM] SlickSauce",
+  time: "[5:43 PM]",
+  username: "SlickSauce",
+  channel: "General",
   tag: "4560",
   msg: "TACOS!"
 }
 ```
-You'll notice the timestamp is included in the username, this is for ease of logging for a non-modified client. However, you can always split the username by a space, then their username will be located at indecies greater than 1 (if they have spaces in their username, after splitting by space, it'd look like `["[5:31", "PM]", "SlickSauce"]`).
 
 ##### On the topic of server commands
 
