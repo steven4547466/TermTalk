@@ -97,13 +97,6 @@ class ServerList {
       }
     })
 
-    back.on("press", () => {
-      screen.destroy()
-      this.names = []
-      servers.setItems([])
-      require("./Main").run()
-    })
-
     this._getList().then(async list => {
       for (let i = 0; i < list.length; i++) {
         let data = await this._pingIP(list[i])
@@ -118,7 +111,7 @@ class ServerList {
       this.publicServers = list
       screen.render()
     })
-    setInterval(() => {
+    let interval = setInterval(() => {
       this.names = []
       this._getList().then(async list => {
         for (let i = 0; i < list.length; i++) {
@@ -135,6 +128,14 @@ class ServerList {
         screen.render()
       })
     }, 5000)
+
+    back.on("press", () => {
+      clearInterval(interval)
+      screen.destroy()
+      this.names = []
+      servers.setItems([])
+      require("./Main").run()
+    })
 
     screen.key(["q", "C-c"], () => {
       process.exit();
@@ -170,6 +171,7 @@ class ServerList {
             }
             screen.render()
           } else {
+            clearInterval(interval)
             Utils.addToIps(ip)
             socket.removeAllListeners()
             this.names = []

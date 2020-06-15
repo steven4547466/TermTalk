@@ -166,7 +166,7 @@ class Main {
 		})
 
 		_pingSavedIPs()
-		setInterval(() => {
+		let interval = setInterval(() => {
 			_pingSavedIPs()
 			screen.render()
 		}, 6000)
@@ -216,6 +216,7 @@ class Main {
 							}
 							screen.render()
 						} else {
+              clearInterval(interval)
 							Utils.addToIps(data.ip)
 							socket.removeAllListeners()
 							Login.run(socket, data.ip)
