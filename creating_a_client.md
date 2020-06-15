@@ -273,7 +273,7 @@ If you don't do something similar, your `sessionID` will be forgotten by the ser
 On connect, if history saving is enabled, the server will emit a `method` with `type: "serverRequest"` and `method: "sendChatHistory"` to your client. The chat history will be in mapped to a key called `history` and will include up to, on a non-modified server instance, 100 messages. Newer messages always come later in the array. One message in the array would look like this:
 ```js
 {
-  time: "[5:43 PM]",
+  timestamp: 1592200641237,
   username: "SlickSauce",
   channel: "General",
   tag: "4560",
