@@ -182,6 +182,10 @@ class ClientTUI {
 			messages.log(`${this._getTime()} ${data.channel ? `[${data.channel}]` : ""} ${data.username}#${data.tag} > ${message}`, prefix, suffix)
 		})
 
+		socket.on("ratelimited", (data) => {
+			messages.log(`${this._getTime()} Client > Ratelimited. Wait ${data.seconds}s`, "{red-fg}", "{/red-fg}")
+		})
+
 		socket.on("disconnect", () => {
 			messages.log(`${this._getTime()} Client > You have been disconnected.`, "{red-fg}", "{/red-fg}")
 		})
