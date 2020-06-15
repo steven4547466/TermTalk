@@ -28,6 +28,7 @@ class ClientTUI {
 	static textPrefix = `{${Utils.config.chatColor}-fg}`
 	static textSuffix = `{/${Utils.config.chatColor}-fg}`
 	static memberList = []
+	static channelList = []
 
 	static run(socket, user, connectedIP) {
 		const screen = blessed.screen({
@@ -55,8 +56,8 @@ class ClientTUI {
 		})
 
 		const grid = new contrib.grid({ rows: 10, cols: 10, screen: screen })
-		const messages = grid.set(0.5, 0, 9, 8, contrib.log, {
-			label: "Messages",
+		const messages = grid.set(0.5, 1.5, 9, 7.5, contrib.log, {
+			label: "General Messages",
 			tags: true,
 			style: {
 				fg: "green",
@@ -69,6 +70,17 @@ class ClientTUI {
 		})
 		const members = grid.set(0.5, 8, 9, 2, contrib.log, {
 			label: "Members",
+			tags: true,
+			style: {
+				fg: "green",
+				border: {
+					fg: "cyan"
+				}
+			},
+			bufferLength: screen.height
+		})
+		const channels = grid.set(0.5, 0, 9, 1.5, contrib.log, {
+			label: "Channels",
 			tags: true,
 			style: {
 				fg: "green",
@@ -119,6 +131,13 @@ class ClientTUI {
 		socket.emit("method", {
 			type: "clientRequest",
 			method: "getMemberList",
+			channel: "General",
+			...user
+		})
+
+		socket.emit("method", {
+			type: "clientRequest",
+			method: "getChannelList",
 			...user
 		})
 
@@ -159,7 +178,7 @@ class ClientTUI {
 			}
 			message += matchingMessage
 
-			messages.log(`${this._getTime()} ${data.username}#${data.tag} > ${message}`, prefix, suffix)
+			messages.log(`${this._getTime()} [${data.channel}] ${data.username}#${data.tag} > ${message}`, prefix, suffix)
 		})
 
 		socket.on("disconnect", () => {
@@ -185,6 +204,15 @@ class ClientTUI {
 				if (data.method == "getMemberList") {
 					this.memberList = data.memberList
 					this._updateMemberList(members)
+				}else if(data.method == "channelChange"){
+					messages.logLines = []
+					messages.log(`${this._getTime()} Client > ${data.message.trim()}`, this.textPrefix, this.textSuffix)
+					messages.setLabel(`${data.channel} Messages`)
+					screen.render()
+				}else if(data.method == "getChannelList"){
+					this.channelList = data.channelList
+					this.channelList.unshift("General")
+					this._updateChannelList(channels)
 				}
 			}
 		})
@@ -204,8 +232,11 @@ class ClientTUI {
 				let start = data.history.length - screen.height
 				for(let i = start < 0 ? 0 : start; i < screen.height - 1; i++){
 					if(!data.history[i]) break
-					messages.log(`${data.history[i].username}#${data.history[i].tag} > ${data.history[i].msg}`, "{white-fg}", "{/white-fg}")
+					messages.log(`${data.history[i].time} [${data.history[i].channel}] ${data.history[i].username}#${data.history[i].tag} > ${data.history[i].msg}`, "{white-fg}", "{/white-fg}")
 				}
+			}else if(data.method == "userChangeChannel"){
+				if(!data.join) messages.log(`${this._getTime()} [${data.previousChannel}] ${data.username}#${data.tag} < Changed to ${data.newChannel} channel.`, this.textPrefix, this.textSuffix)
+				else messages.log(`${this._getTime()} [${data.newChannel}] ${data.username}#${data.tag} < Joined from ${data.previousChannel}.`, this.textPrefix, this.textSuffix)
 			}
 		})
 
@@ -214,6 +245,18 @@ class ClientTUI {
 		})
 
 		screen.render()
+	}
+
+	static _updateChannelList(channels){
+		let list = JSON.parse(JSON.stringify(this.channelList)) // Deep cloning or we refrence the same list.
+		
+		for (let i = 0; i < list.length; i++) {
+			list[i] = `${this.textPrefix}${list[i]}${this.textSuffix}`
+		}
+
+		channels.logLines = list
+		channels.setItems(channels.logLines)
+		channels.scrollTo(channels.logLines.length)
 	}
 
 	static _updateMemberList(members) {
@@ -227,7 +270,7 @@ class ClientTUI {
 			list.length = members.options.bufferLength
 		}
 
-		if (!list[0].includes("#") && list[0].includes("lurker(s)")) {
+		if (list[0] && !list[0].includes("#") && list[0].includes("lurker(s)")) {
 			list.splice(list.length - 1, 0, list.splice(0, 1)[0])
 		}
 
