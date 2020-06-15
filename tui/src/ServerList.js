@@ -113,6 +113,7 @@ class ServerList {
       screen.render()
     })
     setInterval(() => {
+      this.names = []
       this._getList().then(async list => {
         for (let i = 0; i < list.length; i++) {
           let data = await this._pingIP(list[i])
