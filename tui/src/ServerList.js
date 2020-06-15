@@ -107,6 +107,11 @@ class ServerList {
     this._getList().then(async list => {
       for (let i = 0; i < list.length; i++) {
         let data = await this._pingIP(list[i])
+        if(data.members == "unk"){
+          list.splice(i, 1)
+          i--
+          continue
+        }
         this.names.push(`${data.name} : ${data.members}/${data.maxMembers} ${data.secure ? "Secure" : ""}`)
       }
       servers.setItems(this.names)
@@ -118,6 +123,11 @@ class ServerList {
       this._getList().then(async list => {
         for (let i = 0; i < list.length; i++) {
           let data = await this._pingIP(list[i])
+          if(data.members == "unk"){
+            list.splice(i, 1)
+            i--
+            continue
+          }
           this.names.push(`${data.name} : ${data.members}/${data.maxMembers} ${data.secure ? "Secure" : ""}`)
         }
         servers.setItems(this.names)
