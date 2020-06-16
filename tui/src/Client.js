@@ -151,7 +151,7 @@ class ClientTUI {
 			socket.emit("msg", { msg, username: user.username, tag: user.tag, uid: user.uid, id: user.id, sessionID: user.sessionID })
 		})
 
-		const messageRegex = /(?<mention>@[A-Za-z0-9_].+?#[0-9]{4})/g
+		const messageRegex = /(?<mention>@[^\s].+?#[^\s]{1,4})/g
 		socket.on('msg', (data) => {
 			if (data.server) return messages.log(`${this._getTime()} {white-fg}${data.username}#${data.tag} > ${data.msg}{/white-fg}`, "{white-fg}", "{/white-fg}")
 			let message = ""
