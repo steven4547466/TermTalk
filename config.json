@@ -1,4 +1,9 @@
 {
 	"ips": [],
-	"chatColor": "#4bed52"
+	"chatColor": "#4bed52",
+	"defaultUser": {
+		"uid": "",
+		"username": "",
+		"tag": ""
+	}
 }
