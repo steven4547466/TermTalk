@@ -47,6 +47,15 @@ class Utils {
 		config.chatColor = color
 		this.overWriteConfig(config)
 	}
+
+	static setDefaultUser(user){
+		let config = this.config
+		if(!config.defaultUser) config.defaultUser = {}
+		config.defaultUser.uid = user.uid
+		config.defaultUser.username = user.username
+		config.defaultUser.tag = user.tag
+		this.overWriteConfig(config)
+	}
 }
 
 module.exports = Utils;
