@@ -148,7 +148,7 @@ class ClientTUI {
 			const msg = messageBox.getValue()
 			messageBox.clearValue()
 			if (this._handleCommands(msg.trim(), messages, screen, {messageBox, connectedIP, socket})) return
-			socket.emit("msg", { msg, username: user.username, tag: user.tag, uid: user.uid, id: user.id, sessionID: user.sessionID })
+			socket.emit("msg", { msg, username: user.username, tag: user.tag, uid: user.uid, userID: user.id, sessionID: user.sessionID })
 		})
 
 		const messageRegex = /(?<mention>@[^\s].+?#[^\s]{1,4})/g
