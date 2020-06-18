@@ -147,7 +147,7 @@ class ClientTUI {
 		form.on("submit", () => {
 			const msg = messageBox.getValue()
 			messageBox.clearValue()
-			if (this._handleCommands(msg.trim(), messages, screen, {messageBox, connectedIP})) return
+			if (this._handleCommands(msg.trim(), messages, screen, {messageBox, connectedIP, socket})) return
 			socket.emit("msg", { msg, username: user.username, tag: user.tag, uid: user.uid, id: user.id, sessionID: user.sessionID })
 		})
 
@@ -209,7 +209,7 @@ class ClientTUI {
 				if (data.method == "getMemberList") {
 					this.memberList = data.memberList
 					this._updateMemberList(members)
-				}else if(data.method == "channelChange"){
+				} else if(data.method == "channelChange") {
 					messages.logLines = []
 					messages.log(`${this._getTime()} Client > ${data.message.trim()}`, this.textPrefix, this.textSuffix)
 					messages.setLabel(`${data.channel} Messages`)
@@ -245,7 +245,7 @@ class ClientTUI {
 					if(!data.history[i]) break
 					messages.log(`${this._getTime(data.history[i].timestamp)} [${data.history[i].channel}] ${data.history[i].username}#${data.history[i].tag} > ${data.history[i].msg}`, "{white-fg}", "{/white-fg}")
 				}
-			}else if(data.method == "userChangeChannel"){
+			} else if(data.method == "userChangeChannel") {
 				if(!data.join) messages.log(`${this._getTime()} [${data.previousChannel}] ${data.username}#${data.tag} < Changed to ${data.newChannel} channel.`, this.textPrefix, this.textSuffix)
 				else messages.log(`${this._getTime()} [${data.newChannel}] ${data.username}#${data.tag} < Joined from ${data.previousChannel}.`, this.textPrefix, this.textSuffix)
 			}
@@ -339,8 +339,8 @@ class ClientTUI {
 								messageLog.log(`Client > Connecting failed: ${d.message}`, this.textPrefix, this.textSuffix)
 							} else {
 								Utils.addToIps(args[0])
-								socket.close(true)
-								socket.removeAllListeners()
+								handleArgs.socket.close(true)
+								handleArgs.socket.removeAllListeners()
 								newSocket.removeAllListeners()
 								Login.run(newSocket, args[0])
 								screen.destroy()

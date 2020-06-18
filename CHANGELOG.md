@@ -2,15 +2,28 @@
 
 This changelog is to note all changes that are notable as of June 15th and onward. This project, as soon as it is out of beta testing will begin to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html). 
 
+## [0.4.2] - 2020-06-17
+
+### Changed 
+- Fix bug with /connect
+- Server list size
+
+
+## [0.4.2] - 2020-06-17
+## Added
+- Config initialization for TUI
+- Depreciation notice in CLI source file  
+
+
 ## [0.4.1] - 2020-06-15 - Beta Release
 
-## Added
+### Added
 - This changelog.
 
-## Changed
+### Changed
 - Fixed server list.
 - Made TUI main client.
 - Fix the list... again
 
-## Deprecated
+### Deprecated
 - The CLI is now deprecated and no longer developed or supported.

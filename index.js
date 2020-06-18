@@ -17,6 +17,11 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+/*
+	THIS PART OF THE CODE, OR THE CLI CLIENT IS DEPRECATED. REFER TO tui/index.js
+	WE WILL NOT PROVIDE SUPPORT FOR THIS.
+*/
+
 const io = require('socket.io-client')
 const fs = require("fs")
 const { Input, prompt } = require('enquirer')
