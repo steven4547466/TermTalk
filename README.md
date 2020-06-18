@@ -19,10 +19,9 @@ npm install
 npm link
 ```  
 Now you can run `termtalk`.  
-If you don't want to link, the script `tui` are available:  
-OR
+If you don't want to link, the script `termtalk` is available: 
 ```
-npm run tui
+npm run termtalk
 ```  
 
 # Documentation
