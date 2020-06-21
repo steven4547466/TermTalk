@@ -243,11 +243,11 @@ class ClientTUI {
 				let start = data.history.length - screen.height
 				for(let i = start < 0 ? 0 : start; i < screen.height - 1; i++){
 					if(!data.history[i]) break
-					messages.log(`${this._getTime(data.history[i].timestamp)} [${data.history[i].channel}] ${data.history[i].username}#${data.history[i].tag} > ${data.history[i].msg}`, "{white-fg}", "{/white-fg}")
+					messages.log(`${this._getTime(data.history[i].timestamp)} [${data.history[i].channel}] ${data.bot ? "[BOT] " : ""}${data.history[i].username}#${data.history[i].tag} > ${data.history[i].msg}`, "{white-fg}", "{/white-fg}")
 				}
 			} else if(data.method == "userChangeChannel") {
-				if(!data.join) messages.log(`${this._getTime()} [${data.previousChannel}] ${data.username}#${data.tag} < Changed to ${data.newChannel} channel.`, this.textPrefix, this.textSuffix)
-				else messages.log(`${this._getTime()} [${data.newChannel}] ${data.username}#${data.tag} < Joined from ${data.previousChannel}.`, this.textPrefix, this.textSuffix)
+				if(!data.join) messages.log(`${this._getTime()} [${data.previousChannel}] ${data.bot ? "[BOT] " : ""}${data.username}#${data.tag} < Changed to ${data.newChannel} channel.`, this.textPrefix, this.textSuffix)
+				else messages.log(`${this._getTime()} [${data.newChannel}] ${data.bot ? "[BOT] " : ""}${data.username}#${data.tag} < Joined from ${data.previousChannel}.`, this.textPrefix, this.textSuffix)
 			}
 		})
 
